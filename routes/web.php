@@ -1,0 +1,190 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+// Player Profile - View
+Route::get('viewplayer', [App\Http\Controllers\HomeController::class, 'players'])->name('viewplayer');
+
+//PROFILES - Now handled dynamically by Route::get('player/{id}', [HomeController::class, 'showPlayer'])
+// Individual player routes (player1, player2, etc.) have been replaced with dynamic routing
+
+
+//ACADEMY PROFILES - Now handled dynamically by Route::get('player/{id}', [HomeController::class, 'showPlayer'])
+// Individual academy player routes (player-academy1, player-academy2, etc.) have been replaced with dynamic routing
+
+Route::get('match', function () {
+    return view('/pages/match');
+});
+
+//PROFILES END ACADEMY
+
+//ACADEMY U13, U15, U17 PROFILES - Now handled dynamically by Route::get('player/{id}', [HomeController::class, 'showPlayer'])
+// All academy player routes have been replaced with dynamic routing
+
+// All remaining academy player routes (U13, U15, U17) have been replaced with dynamic routing
+//Events - View
+Route::get('events', function () {
+    return view('/pages/events');
+});
+
+//Memberships - View
+Route::get('membership', function () {
+    return view('/pages/membership');
+});
+
+//Register - View
+Route::get('register', function () {
+    return view('/pages/register');
+});
+
+Route::get('login', function () {
+    return view('/pages/login');
+});
+
+Route::get('privacy', function () {
+    return view('/pages/privacy');
+});
+
+Route::get('terms-conditions', function () {
+    return view('/pages/terms-conditions');
+});
+
+//Team - View
+Route::get('viewteam', [App\Http\Controllers\HomeController::class, 'seniorTeam'])->name('team.senior');
+
+//Academy Team Views
+Route::get('u20team', [App\Http\Controllers\HomeController::class, 'u20Team'])->name('team.u20');
+Route::get('u17team', [App\Http\Controllers\HomeController::class, 'u17Team'])->name('team.u17');
+Route::get('u15team', [App\Http\Controllers\HomeController::class, 'u15Team'])->name('team.u15');
+Route::get('u13team', [App\Http\Controllers\HomeController::class, 'u13Team'])->name('team.u13');
+
+//Post - View
+Route::get('post', function () {
+    return view('/posts/viewpost');
+});
+
+//About 
+//Post - View
+Route::get('about', [App\Http\Controllers\HomeController::class, 'about'])->name('about');
+
+Route::get('missionvision', [App\Http\Controllers\HomeController::class, 'missionVision'])->name('mission-vision');
+
+Route::get('history', [App\Http\Controllers\HomeController::class, 'history'])->name('history');
+
+Route::get('trophy', function () {
+    return view('/about/trophy');
+});
+
+Route::get('azamcomplex', function () {
+    return view('/about/azamcomplex');
+});
+
+Route::get('senior', function () {
+    return view('/about/senior');
+});
+
+Route::get('board', function () {
+    return view('/about/board');
+});
+
+Route::get('contact', function () {
+    return view('/pages/contact');
+});
+
+
+
+//Temp POSTS
+//POST ROUTES - Now handled dynamically by HomeController::showNews()
+// All individual post routes (post1-post26) have been replaced with dynamic routing
+// Use: Route::get('news/{slug}', [HomeController::class, 'showNews'])->name('news.show')
+//Latest News - View
+Route::get('latestnews', [App\Http\Controllers\HomeController::class, 'news'])->name('latestnews');
+//Latest News - View
+Route::get('newsupdates', [App\Http\Controllers\HomeController::class, 'news'])->name('newsupdates');
+//Latest News - View
+Route::get('breakingnews', [App\Http\Controllers\HomeController::class, 'news'])->name('breakingnews');
+
+
+//Fixtures - View
+Route::get('fixtures', [App\Http\Controllers\HomeController::class, 'fixtures'])->name('fixtures');
+Route::get('fixture/{fixture}', [App\Http\Controllers\HomeController::class, 'showFixture'])->name('fixture.show');
+
+Route::get('results', [App\Http\Controllers\HomeController::class, 'results'])->name('results');
+
+Route::get('tables', [App\Http\Controllers\HomeController::class, 'tables'])->name('tables');
+
+//AZAMFC TV - View
+Route::get('tv', [App\Http\Controllers\HomeController::class, 'tv'])->name('tv');
+
+//About Us - View (duplicate route - keeping this one)
+// Route::get('about', [App\Http\Controllers\HomeController::class, 'about'])->name('about');
+
+// News Routes
+Route::get('news', [App\Http\Controllers\HomeController::class, 'news'])->name('news.index');
+Route::get('news/{slug}', [App\Http\Controllers\HomeController::class, 'showNews'])->name('news.show');
+
+// Player Routes
+Route::get('players', [App\Http\Controllers\HomeController::class, 'players'])->name('players');
+Route::get('player/{id}', [App\Http\Controllers\HomeController::class, 'showPlayer'])->name('player.show');
+
+// Authentication Routes
+Route::get('/login', [App\Http\Controllers\Auth\AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login']);
+Route::post('/logout', [App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout');
+
+// Admin Routes (Protected by authentication and admin middleware)
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');
+    
+    // User Management (Super Admin and limited Admin access)
+    Route::middleware('role:super_admin,admin')->group(function () {
+        Route::get('/users', [App\Http\Controllers\AdminController::class, 'userIndex'])->name('users.index');
+        Route::get('/users/create', [App\Http\Controllers\AdminController::class, 'userCreate'])->name('users.create');
+        Route::post('/users', [App\Http\Controllers\AdminController::class, 'userStore'])->name('users.store');
+        Route::get('/users/{user}', [App\Http\Controllers\AdminController::class, 'userShow'])->name('users.show');
+        Route::get('/users/{user}/edit', [App\Http\Controllers\AdminController::class, 'userEdit'])->name('users.edit');
+        Route::put('/users/{user}', [App\Http\Controllers\AdminController::class, 'userUpdate'])->name('users.update');
+        Route::delete('/users/{user}', [App\Http\Controllers\AdminController::class, 'userDestroy'])->name('users.destroy');
+    });
+    
+    // Content Management (Admin and Editor access)
+    Route::resource('news', App\Http\Controllers\Admin\NewsController::class);
+    Route::resource('players', App\Http\Controllers\Admin\PlayerController::class);
+    Route::resource('teams', App\Http\Controllers\Admin\TeamController::class);
+    
+    // Tournament Management
+    Route::resource('tournaments', App\Http\Controllers\Admin\TournamentController::class);
+    Route::patch('tournaments/{tournament}/toggle-status', [App\Http\Controllers\Admin\TournamentController::class, 'toggleStatus'])->name('tournaments.toggle-status');
+    
+    // Fixture Management
+    Route::resource('fixtures', App\Http\Controllers\Admin\FixtureController::class);
+    Route::patch('fixtures/{fixture}/status', [App\Http\Controllers\Admin\FixtureController::class, 'updateStatus'])->name('fixtures.update-status');
+    Route::patch('fixtures/{fixture}/result', [App\Http\Controllers\Admin\FixtureController::class, 'updateResult'])->name('fixtures.update-result');
+    Route::get('fixtures/{fixture}/upcoming', [App\Http\Controllers\Admin\FixtureController::class, 'upcoming'])->name('fixtures.upcoming');
+    Route::get('fixtures/{fixture}/past', [App\Http\Controllers\Admin\FixtureController::class, 'past'])->name('fixtures.past');
+    
+    // Match Events Management
+    Route::get('fixtures/{fixture}/events', [App\Http\Controllers\Admin\MatchEventController::class, 'index'])->name('fixtures.events.index');
+    Route::post('fixtures/{fixture}/events', [App\Http\Controllers\Admin\MatchEventController::class, 'store'])->name('fixtures.events.store');
+    Route::put('events/{event}', [App\Http\Controllers\Admin\MatchEventController::class, 'update'])->name('events.update');
+    Route::delete('events/{event}', [App\Http\Controllers\Admin\MatchEventController::class, 'destroy'])->name('events.destroy');
+    Route::get('fixtures/{fixture}/events/live', [App\Http\Controllers\Admin\MatchEventController::class, 'getLiveEvents'])->name('fixtures.events.live');
+    Route::post('fixtures/{fixture}/events/bulk', [App\Http\Controllers\Admin\MatchEventController::class, 'bulkStore'])->name('fixtures.events.bulk');
+    
+    // TinyMCE Image Upload
+    Route::post('/upload-image', [App\Http\Controllers\AdminController::class, 'uploadImage'])->name('upload.image');
+});

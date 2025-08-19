@@ -1,0 +1,355 @@
+/* Enhanced Fixtures Styling */
+
+/* Fixture Card Enhancements */
+.fixture-card, .result-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.fixture-card:hover, .result-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Header Section */
+.fixture-header, .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.tournament-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.match-type {
+    background: #f8f9fa;
+    color: #6c757d;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    text-transform: capitalize;
+}
+
+.match-status.completed {
+    background: #28a745;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+}
+
+/* Teams Section */
+.teams-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.team-logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 8px;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.team-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    color: #333;
+}
+
+/* VS Section */
+.vs-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 15px;
+}
+
+.vs-text {
+    font-weight: bold;
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.match-time {
+    background: #007bff;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+/* Score Section */
+.score-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 15px;
+}
+
+.final-score {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.home-score, .away-score {
+    min-width: 30px;
+    text-align: center;
+}
+
+.score-separator {
+    margin: 0 10px;
+    color: #6c757d;
+}
+
+.match-result {
+    margin-top: 5px;
+}
+
+.result-badge {
+    padding: 4px 8px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 0.8rem;
+    min-width: 25px;
+    text-align: center;
+}
+
+.result-badge.win {
+    background: #28a745;
+    color: white;
+}
+
+.result-badge.loss {
+    background: #dc3545;
+    color: white;
+}
+
+.result-badge.draw {
+    background: #ffc107;
+    color: #333;
+}
+
+/* Match Details */
+.match-details {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.match-details > div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.match-details i {
+    margin-right: 8px;
+    width: 16px;
+    color: #007bff;
+}
+
+.broadcast-link {
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.broadcast-link:hover {
+    color: #c82333;
+    text-decoration: underline;
+}
+
+/* Match Preview/Report */
+.match-preview, .match-report {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.match-preview p, .match-report p {
+    font-size: 0.85rem;
+    color: #6c757d;
+    line-height: 1.4;
+    margin-bottom: 8px;
+}
+
+.read-more {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.read-more:hover {
+    text-decoration: underline;
+}
+
+/* Match Events */
+.match-events {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.match-events h6 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.event-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.event-time {
+    background: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 8px;
+    font-weight: 600;
+    min-width: 30px;
+    text-align: center;
+}
+
+.event-type {
+    margin-right: 8px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.event-player {
+    color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .teams-section {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .vs-section, .score-section {
+        margin: 10px 0;
+    }
+    
+    .team {
+        flex-direction: row;
+        gap: 10px;
+    }
+    
+    .team-logo {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 0;
+    }
+    
+    .fixture-header, .result-header {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+}
+
+/* Featured Match Enhancements */
+.latest-featured-game .highlight-score-section {
+    padding: 40px 20px;
+}
+
+.latest-featured-game .uk-card-body {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.latest-featured-game .stadium-details {
+    font-size: 1.1rem;
+    margin-top: 20px;
+}
+
+.latest-featured-game .boldfont {
+    background: rgba(0, 123, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: 25px;
+    border: 2px solid rgba(0, 123, 255, 0.3);
+}
+
+/* Animation Enhancements */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fixture-card, .result-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.fixture-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.fixture-card:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+/* Loading States */
+.fixture-loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}

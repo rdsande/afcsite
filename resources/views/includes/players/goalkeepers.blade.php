@@ -1,0 +1,38 @@
+@if(isset($seniorPlayers['Goalkeeper']) && $seniorPlayers['Goalkeeper']->count() > 0)
+    @foreach($seniorPlayers['Goalkeeper'] as $goalkeeper)
+        <!-- Player -->
+        <li>
+            <a href="{{ route('player.show', $goalkeeper->id) }}">
+                <div>
+                    <div class="uk-card uk-card-default uk-card-body uk-animation-toggle" tabindex="0">
+                        <div class="uk-inline-clip uk-transition-toggle" tabindex="0">
+                            <span class="bgtop"></span>
+                            <img loading="lazy" class="uk-transition-scale-up uk-transition-opaque" src="{{ $goalkeeper->profile_image ? asset('storage/' . $goalkeeper->profile_image) : asset('/img/players/profiles/default-player.png') }}" width="1800" height="1200" alt="{{ $goalkeeper->name }}">
+                        </div>
+                        <div class="player-card-details uk-animation-slide-bottom-medium">
+                            <div class="uk-child-width-expand@s uk-text-center" uk-grid>
+                                <div>
+                                    <span class="uk-heading-divider">{{ strtoupper($goalkeeper->name) }}<span class="secondname">
+                                            {{ strtoupper($goalkeeper->last_name ?? '') }}
+                                        </span></span>
+                                    <span class="pos-player"> {{ $goalkeeper->position }} </span>
+                                </div>
+                                <div>
+                                    <span class="plyr-number">
+                                        {{ $goalkeeper->jersey_number }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </li>
+    @endforeach
+@else
+    <li>
+        <div class="uk-text-center uk-padding">
+            <p>No goalkeepers available</p>
+        </div>
+    </li>
+@endif

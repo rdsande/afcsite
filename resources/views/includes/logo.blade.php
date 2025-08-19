@@ -1,0 +1,1 @@
+<img src="{{ asset('img/logo-azamfc.svg')}}" alt="Logo" title="Azam Football Club logo" />
