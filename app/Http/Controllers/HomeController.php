@@ -28,22 +28,38 @@ class HomeController extends Controller
             ->limit(6)
             ->get();
 
-        // Get next 3 upcoming fixtures with enhanced data
-        $upcomingFixtures = Fixture::with(['tournament', 'matchEvents', 'homeTeam', 'awayTeam'])
-            ->upcoming()
-            ->orderBy('match_date', 'asc')
-            ->limit(3)
-            ->get();
+        // Get the most recent completed match (Previous Match)
+        $previousMatch = Fixture::with(['tournament', 'homeTeam', 'awayTeam'])
+            ->where('match_date', '<', now())
+            ->where('status', 'completed')
+            ->orderBy('match_date', 'desc')
+            ->first();
 
-        // Get featured fixtures for homepage highlight
-        $featuredFixtures = Fixture::with(['tournament', 'matchEvents', 'homeTeam', 'awayTeam'])
-            ->featured()
-            ->upcoming()
+        // Get the next upcoming fixture (Next Fixture)
+        $nextFixture = Fixture::with(['tournament', 'homeTeam', 'awayTeam'])
+            ->where('match_date', '>', now())
+            ->where('status', 'scheduled')
             ->orderBy('match_date', 'asc')
+            ->first();
+
+        // Get upcoming fixtures after the next one (Upcoming Fixtures)
+        $upcomingFixtures = Fixture::with(['tournament', 'homeTeam', 'awayTeam'])
+            ->where('match_date', '>', now())
+            ->where('status', 'scheduled')
+            ->orderBy('match_date', 'asc')
+            ->skip(1)
             ->limit(1)
             ->get();
 
-        // Get recent 3 match results
+        // Get all fixtures for the fixtures-two section (next + upcoming, limited to 8)
+        $allFixtures = Fixture::with(['tournament', 'homeTeam', 'awayTeam'])
+            ->where('match_date', '>', now())
+            ->where('status', 'scheduled')
+            ->orderBy('match_date', 'asc')
+            ->limit(8)
+            ->get();
+
+        // Get recent 3 match results for other sections if needed
         $recentMatches = MatchResult::recent(3)->get();
 
         // Get senior team players grouped by position for squad tabs
@@ -56,8 +72,10 @@ class HomeController extends Controller
         return view('welcome', compact(
             'featuredNews',
             'latestNews', 
+            'previousMatch',
+            'nextFixture',
             'upcomingFixtures',
-            'featuredFixtures',
+            'allFixtures',
             'recentMatches',
             'seniorPlayers'
         ))->with('news', $latestNews);

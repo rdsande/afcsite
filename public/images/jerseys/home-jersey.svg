@@ -1,0 +1,36 @@
+<svg width="300" height="400" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Jersey Background -->
+  <rect x="50" y="80" width="200" height="280" rx="20" ry="20" fill="#1e3a8a" stroke="#1e40af" stroke-width="2"/>
+  
+  <!-- Sleeves -->
+  <ellipse cx="30" cy="120" rx="25" ry="60" fill="#1e3a8a" stroke="#1e40af" stroke-width="2"/>
+  <ellipse cx="270" cy="120" rx="25" ry="60" fill="#1e3a8a" stroke="#1e40af" stroke-width="2"/>
+  
+  <!-- Collar -->
+  <path d="M 100 80 Q 150 60 200 80 L 200 100 Q 150 85 100 100 Z" fill="#ffffff" stroke="#1e40af" stroke-width="2"/>
+  
+  <!-- AZAM FC Logo Area -->
+  <circle cx="120" cy="140" r="25" fill="#ffffff" stroke="#1e40af" stroke-width="2"/>
+  <text x="120" y="148" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1e3a8a">AZAM</text>
+  
+  <!-- Sponsor Logo Area -->
+  <rect x="160" y="115" width="60" height="30" rx="5" ry="5" fill="#ffffff" stroke="#1e40af" stroke-width="1"/>
+  <text x="190" y="135" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1e3a8a">SPONSOR</text>
+  
+  <!-- Jersey Stripes/Design -->
+  <line x1="70" y1="180" x2="230" y2="180" stroke="#ffffff" stroke-width="2" opacity="0.3"/>
+  <line x1="70" y1="220" x2="230" y2="220" stroke="#ffffff" stroke-width="2" opacity="0.3"/>
+  <line x1="70" y1="260" x2="230" y2="260" stroke="#ffffff" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Name Area (placeholder) -->
+  <rect x="80" y="300" width="140" height="20" rx="10" ry="10" fill="none" stroke="#ffffff" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+  <text x="150" y="314" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#ffffff" opacity="0.7">CUSTOM NAME</text>
+  
+  <!-- Number Area (placeholder) -->
+  <circle cx="220" cy="200" r="30" fill="none" stroke="#ffffff" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+  <text x="220" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#ffffff" opacity="0.7">00</text>
+  
+  <!-- Jersey Title -->
+  <text x="150" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1e3a8a">AZAM FC HOME KIT</text>
+  <text x="150" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">2024/25 Season</text>
+</svg>

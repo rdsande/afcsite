@@ -2,6 +2,7 @@
 @if(isset($featuredFixtures) && $featuredFixtures->count() > 0)
 <div class="uk-inline latest-featured-game">
     @php $featuredMatch = $featuredFixtures->first(); @endphp
+    <a href="{{ route('fixture.show', $featuredMatch->id) }}" class="uk-link-reset">
     <img src="{{ asset('img/breadcrumbs/image3.png')}}" uk-img="loading: eager" class="uk-animation-kenburns" width="1800" height="600" alt="">
     <div class="uk-overlay-primary uk-position-cover"></div>
     <div class="uk-overlay uk-position-center uk-light">
@@ -58,6 +59,7 @@
             </div>
         </div>
     </div>
+    </a>
 </div>
 @endif
 
@@ -85,11 +87,30 @@
                     <ul class="uk-grid-small uk-grid uk-child-width-1-3@s uk-text-center fxtures-list-divs">
                         @foreach($fixtures as $fixture)
                             <li>
+                                <a href="{{ route('fixture.show', $fixture->id) }}" class="uk-link-reset">
                                 <div class="uk-card uk-card-default uk-card-body fixture-card">
                                     <div class="fixture-header">
                                         <span class="tournament-badge">{{ $fixture->tournament->short_name ?? $fixture->competition_type }}</span>
                                         <span class="match-type">{{ ucfirst($fixture->match_type) }}</span>
                                     </div>
+                                    
+                                    @php
+                                        // Determine if AZAM FC is home or away team
+                                        $isAzamHome = $fixture->homeTeam && stripos($fixture->homeTeam->name, 'AZAM') !== false;
+                                        $isAzamAway = $fixture->awayTeam && stripos($fixture->awayTeam->name, 'AZAM') !== false;
+                                        
+                                        if ($isAzamHome) {
+                                            $opponentTeam = $fixture->awayTeam;
+                                            $matchTitle = 'AZAM FC vs ' . ($opponentTeam ? $opponentTeam->name : 'TBD');
+                                        } elseif ($isAzamAway) {
+                                            $opponentTeam = $fixture->homeTeam;
+                                            $matchTitle = ($opponentTeam ? $opponentTeam->name : 'TBD') . ' vs AZAM FC';
+                                        } else {
+                                            // Fallback for non-AZAM matches
+                                            $opponentTeam = $fixture->awayTeam;
+                                            $matchTitle = ($fixture->homeTeam ? $fixture->homeTeam->name : 'TBD') . ' vs ' . ($fixture->awayTeam ? $fixture->awayTeam->name : 'TBD');
+                                        }
+                                    @endphp
                                     
                                     <div class="teams-section">
                                         <div class="team home-team">
@@ -142,6 +163,7 @@
                                         </div>
                                     @endif
                                 </div>
+                                </a>
                             </li>
                         @endforeach
                     </ul>

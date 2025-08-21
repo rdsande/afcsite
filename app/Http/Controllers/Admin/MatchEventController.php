@@ -25,6 +25,30 @@ class MatchEventController extends Controller
         $events = $fixture->matchEvents()->with('player')->ordered()->get();
         $players = Player::where('team_category', $fixture->team_category)->get();
         
+        // Return JSON for AJAX requests
+        if (request()->expectsJson()) {
+            $eventsData = $events->map(function ($event) {
+                return [
+                    'id' => $event->id,
+                    'type' => $event->event_type,
+                    'minute' => $event->minute,
+                    'team' => $event->team,
+                    'player' => $event->player ? $event->player->name : null,
+                    'description' => $event->description,
+                    'icon' => $event->event_icon,
+                    'display_name' => $event->event_display_name,
+                    'formatted_minute' => $event->formatted_minute,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'events' => $eventsData,
+                'fixture_status' => $fixture->status,
+                'is_live' => $fixture->is_live,
+            ]);
+        }
+        
         return view('admin.match-events.index', compact('fixture', 'events', 'players'));
     }
 

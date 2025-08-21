@@ -22,6 +22,7 @@
                     <ul class="uk-grid-small uk-grid uk-child-width-1-3@s uk-text-center fxtures-list-divs">
                         @foreach($results as $result)
                             <li>
+                                <a href="{{ route('fixture.show', $result->id) }}" class="uk-link-reset">
                                 <div class="uk-card uk-card-default uk-card-body result-card">
                                     <div class="result-header">
                                         <span class="tournament-badge">{{ $result->tournament->short_name ?? $result->competition_type }}</span>
@@ -120,6 +121,7 @@
                                         </div>
                                     @endif
                                 </div>
+                                </a>
                             </li>
                         @endforeach
                     </ul>
@@ -131,82 +133,6 @@
             </div>
         @endif
             </div>
-        </div>
-        <!-- Fixtures -->
-        <div>
-            <ul class="uk-grid-small uk-grid uk-child-width-1-3@s uk-text-center fxtures-list-divs">
-                @include('includes/fixtures/2023/nov.fixtures')
-            </ul>
-        </div>
-        <!-- Monthly -->
-        <div class="widget-header-wrapper">
-            <div class="widget-header-wrapper__header">
-                <header class="widget-header  ">
-                    <h2 class="widget-header__title">DECEMBER 2023</h2>
-                </header>
-            </div>
-        </div>
-        <!-- Fixtures -->
-        <div>
-            <ul class="uk-grid-small uk-grid uk-child-width-1-3@s uk-text-center fxtures-list-divs">
-                @include('includes/fixtures/2023/dec.fixtures')
-            </ul>
-        </div>
-        <!-- Monthly -->
-        <div class="widget-header-wrapper">
-            <div class="widget-header-wrapper__header">
-                <header class="widget-header  ">
-                    <h2 class="widget-header__title">FEBRUARY 2024</h2>
-                </header>
-            </div>
-        </div>
-        <!-- Fixtures -->
-        <div>
-            <ul class="uk-grid-small uk-grid uk-child-width-1-3@s uk-text-center fxtures-list-divs">
-                @include('includes/fixtures/2024/feb.fixtures')
-            </ul>
-        </div>
-        <!-- Monthly -->
-        <div class="widget-header-wrapper">
-            <div class="widget-header-wrapper__header">
-                <header class="widget-header  ">
-                    <h2 class="widget-header__title">MARCH 2024</h2>
-                </header>
-            </div>
-        </div>
-        <!-- Fixtures -->
-        <div>
-            <ul class="uk-grid-small uk-grid uk-child-width-1-3@s uk-text-center fxtures-list-divs">
-                @include('includes/fixtures/2024/mar.fixtures')
-            </ul>
-        </div>
-        <!-- Monthly -->
-        <div class="widget-header-wrapper">
-            <div class="widget-header-wrapper__header">
-                <header class="widget-header  ">
-                    <h2 class="widget-header__title">APRIL 2024</h2>
-                </header>
-            </div>
-        </div>
-        <!-- Fixtures -->
-        <div>
-            <ul class="uk-grid-small uk-grid uk-child-width-1-3@s uk-text-center fxtures-list-divs">
-                @include('includes/fixtures/2024/apr.fixtures')
-            </ul>
-        </div>
-        <!-- Monthly -->
-        <div class="widget-header-wrapper">
-            <div class="widget-header-wrapper__header">
-                <header class="widget-header  ">
-                    <h2 class="widget-header__title">MAY 2024</h2>
-                </header>
-            </div>
-        </div>
-        <!-- Fixtures -->
-        <div>
-            <ul class="uk-grid-small uk-grid uk-child-width-1-3@s uk-text-center fxtures-list-divs">
-                @include('includes/fixtures/2024/may.fixtures')
-            </ul>
         </div>
     </div>
 </div>

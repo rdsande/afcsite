@@ -103,7 +103,7 @@
                             <small class="text-muted d-block">{{ auth()->user()->email ?? 'admin@azamfc.com' }}</small>
                         </div>
                         <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
+                        <a href="{{ route('profile.show') }}" class="dropdown-item">
                             <i class="fas fa-user mr-2"></i> Profile
                         </a>
                         <a href="#" class="dropdown-item">
@@ -268,6 +268,114 @@
                         </li>
 
                         <!-- Divider -->
+                        <li class="nav-header">FAN ENGAGEMENT</li>
+
+                        <!-- Fan Management -->
+                        <li class="nav-item {{ request()->routeIs('admin.fans.*') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ request()->routeIs('admin.fans.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-heart"></i>
+                                <p>
+                                    Fan Management
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.fans.index') }}" class="nav-link {{ request()->routeIs('admin.fans.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>All Fans</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        <!-- Message Management -->
+                        <li class="nav-item {{ request()->routeIs('admin.messages.*') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-envelope"></i>
+                                <p>
+                                    Messages
+                                    <i class="right fas fa-angle-left"></i>
+                                    @php
+                                        $pendingCount = \App\Models\FanMessage::where('status', 'open')->count();
+                                    @endphp
+                                    @if($pendingCount > 0)
+                                        <span class="badge badge-danger right">{{ $pendingCount }}</span>
+                                    @endif
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.messages.index') }}" class="nav-link {{ request()->routeIs('admin.messages.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>All Messages</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.messages.index', ['status' => 'open']) }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Pending Messages</p>
+                                        @if($pendingCount > 0)
+                                            <span class="badge badge-warning right">{{ $pendingCount }}</span>
+                                        @endif
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        <!-- Admin Notices -->
+                        <li class="nav-item {{ request()->routeIs('admin.admin.notices.*') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ request()->routeIs('admin.admin.notices.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-bullhorn"></i>
+                                <p>
+                                    Admin Notices
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.notices.index') }}" class="nav-link {{ request()->routeIs('admin.notices.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>All Notices</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.notices.create') }}" class="nav-link {{ request()->routeIs('admin.notices.create') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Create Notice</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Vendor Management -->
+                        <li class="nav-item {{ request()->routeIs('admin.vendors.*') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ request()->routeIs('admin.vendors.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-store"></i>
+                                <p>
+                                    Vendor Management
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.vendors.index') }}" class="nav-link {{ request()->routeIs('admin.vendors.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>All Vendors</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.vendors.create') }}" class="nav-link {{ request()->routeIs('admin.vendors.create') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Add Vendor</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Divider -->
                         <li class="nav-header">SYSTEM</li>
 
                         <!-- User Management (Admin and Super Admin) -->
@@ -299,7 +407,7 @@
 
                         <!-- Settings -->
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-cog"></i>
                                 <p>Settings</p>
                             </a>

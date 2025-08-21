@@ -65,7 +65,7 @@ class PlayerController extends Controller
             'height' => 'nullable|numeric|min:1.5|max:2.5',
 
             'biography' => 'nullable|string',
-            'video_reel_link' => 'nullable|string|max:20',
+            'video_reel_link' => 'nullable|string|max:10000',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
             'is_captain' => 'boolean',
@@ -158,7 +158,7 @@ class PlayerController extends Controller
             'height' => 'nullable|numeric|min:1.5|max:2.5',
             'weight' => 'nullable|numeric|min:50|max:150',
             'biography' => 'nullable|string',
-            'video_reel_link' => 'nullable|string|max:20',
+            'video_reel_link' => 'nullable|string|max:10000',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
             'is_captain' => 'boolean',
@@ -184,7 +184,7 @@ class PlayerController extends Controller
             'date_of_birth' => $request->date_of_birth,
             'nationality' => $request->nationality,
             'height' => $request->height,
-
+            'video_reel_link' => $request->video_reel_link,
             'biography' => $request->biography,
             'is_active' => $request->boolean('is_active', true),
             'is_captain' => $request->boolean('is_captain'),

@@ -61,6 +61,56 @@ class Player extends Model
         'blocks' => 'integer',
     ];
 
+    /**
+     * Extract YouTube video ID from various URL formats
+     */
+    public function getYoutubeVideoIdAttribute()
+    {
+        if (!$this->video_reel_link) {
+            return null;
+        }
+
+        $url = $this->video_reel_link;
+        
+        // If it's already just an ID (11 characters, alphanumeric)
+        if (preg_match('/^[a-zA-Z0-9_-]{11}$/', $url)) {
+            return $url;
+        }
+
+        // Extract from various YouTube URL formats
+        $patterns = [
+            '/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/',
+            '/youtube\.com\/v\/([a-zA-Z0-9_-]{11})/',
+            '/youtube\.com\/.*[?&]v=([a-zA-Z0-9_-]{11})/',
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $url, $matches)) {
+                return $matches[1];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get YouTube embed URL
+     */
+    public function getYoutubeEmbedUrlAttribute()
+    {
+        $videoId = $this->youtube_video_id;
+        return $videoId ? "https://www.youtube.com/embed/{$videoId}" : null;
+    }
+
+    /**
+     * Get YouTube watch URL
+     */
+    public function getYoutubeWatchUrlAttribute()
+    {
+        $videoId = $this->youtube_video_id;
+        return $videoId ? "https://www.youtube.com/watch?v={$videoId}" : null;
+    }
+
     // Scopes
     public function scopeActive($query)
     {

@@ -432,18 +432,14 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="form-group mb-3">
-                                            <label for="video_reel_link" class="form-label">YouTube Video ID</label>
-                                            <input type="text" 
-                                                   class="form-control @error('video_reel_link') is-invalid @enderror" 
-                                                   id="video_reel_link" 
-                                                   name="video_reel_link" 
-                                                   value="{{ old('video_reel_link', $player->video_reel_link) }}"
-                                                   placeholder="dQw4w9WgXcQ">
-                                            <small class="form-text text-muted">Enter only the YouTube video ID (e.g., from https://www.youtube.com/watch?v=dQw4w9WgXcQ, enter: dQw4w9WgXcQ)</small>
-                                            @error('video_reel_link')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                            <label for="video_reel_link" class="form-label">Video Content</label>
+                            <div id="video-quill-editor" class="@error('video_reel_link') is-invalid @enderror">{!! old('video_reel_link', $player->video_reel_link) !!}</div>
+                            <input type="hidden" name="video_reel_link" id="video-content-input" value="{{ old('video_reel_link', $player->video_reel_link) }}">
+                            <small class="form-text text-muted">Use the editor to add YouTube videos and other content. You can embed videos using the link tool or paste YouTube URLs directly.</small>
+                            @error('video_reel_link')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -525,5 +521,79 @@
             }
         });
     });
+    
+    // Initialize Quill for video content after DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, initializing Quill...');
+        
+        // Wait for Quill to be available
+        if (typeof Quill !== 'undefined') {
+            console.log('Quill is available');
+            
+            var videoQuill = new Quill('#video-quill-editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'align': [] }],
+                        ['link', 'video'],
+                        ['clean']
+                    ]
+                }
+            });
+            
+            console.log('Quill editor initialized');
+
+            // Set initial content if exists
+            var hiddenInput = document.getElementById('video-content-input');
+            if (hiddenInput && hiddenInput.value) {
+                console.log('Setting initial content:', hiddenInput.value);
+                videoQuill.root.innerHTML = hiddenInput.value;
+            }
+
+            // Update hidden input on content change
+            videoQuill.on('text-change', function() {
+                var content = videoQuill.root.innerHTML;
+                console.log('Content changed:', content);
+                hiddenInput.value = content;
+            });
+
+            // Handle form submission
+            var form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Ensure content is updated before submission
+                    var finalContent = videoQuill.root.innerHTML;
+                    hiddenInput.value = finalContent;
+                    console.log('Form submitting with content:', finalContent);
+                });
+            }
+        } else {
+            console.error('Quill.js is not loaded');
+        }
+    });
 </script>
+@endpush
+
+@push('styles')
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<style>
+    #video-quill-editor .ql-editor {
+        min-height: 200px;
+        font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+        font-size: 14px;
+    }
+    #video-quill-editor .ql-container {
+        border-radius: 0 0 0.375rem 0.375rem;
+    }
+    #video-quill-editor .ql-toolbar {
+        border-radius: 0.375rem 0.375rem 0 0;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 @endpush

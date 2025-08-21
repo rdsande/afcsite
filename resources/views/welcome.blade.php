@@ -17,84 +17,198 @@
             <div class="uk-grid-small uk-child-width-expand@s uk-text-center uk-grid-match uk-margin-medium" uk-grid
                 uk-scrollspy="target: > div; cls: uk-animation-scale-up; delay: 200">
                 
-                @if($featuredFixtures && $featuredFixtures->count() > 0)
-                    @php $featured = $featuredFixtures->first(); @endphp
-                    <div class="match-home-card bg-primary-two">
+                <!-- Previous Match -->
+                @if($previousMatch)
+                    <div class="match-home-card">
+                        <a href="{{ route('fixture.show', $previousMatch->id) }}" class="uk-link-reset">
                         <div class="uk-card uk-card-default uk-card-body">
                             <div class="widget-header-wrapper">
                                 <div class="widget-header-wrapper__header">
                                     <header class="widget-header">
-                                        <h2 class="widget-header__title">NEXT MATCH</h2>
+                                        <h2 class="widget-header__title">PREVIOUS MATCH</h2>
                                     </header>
                                 </div>
                             </div>
-                            <div class="card-tag">
-                                <div class="card-inner-teams-results">
+                            <div class="card-inner-teams-results">
+                                @php
+                                    $isAzamHome = $previousMatch->homeTeam && stripos($previousMatch->homeTeam->name, 'AZAM') !== false;
+                                @endphp
+                                @if($isAzamHome)
+                                    <!-- AZAM FC is home team -->
                                     <div class="home-team-item">
                                         <img src="{{ asset('img/logo.png')}}" class="logo-card-item" alt="AZAM FC Logo" />
                                         <span class="team-name-card-item">AZAM FC</span>
                                     </div>
                                     <div class="game-score">
                                         <span class="result-item">
-                                            <h3>{{ $featured->match_date->format('H:i') }}</h3>
+                                            <h3>{{ $previousMatch->home_score ?? '0' }}</h3>
+                                        </span>
+                                        <span class="result-item">
+                                            <h3>{{ $previousMatch->away_score ?? '0' }}</h3>
                                         </span>
                                     </div>
                                     <div class="home-team-item">
-                                        <img src="{{ $featured->opponent_logo ? asset('storage/' . $featured->opponent_logo) : asset('img/teamlogos/default.png') }}" 
-                                             class="logo-card-item" alt="{{ $featured->opponent }} Logo" />
-                                        <span class="team-name-card-item">{{ strtoupper($featured->opponent) }}</span>
+                                        <img src="{{ $previousMatch->awayTeam && $previousMatch->awayTeam->logo ? asset('storage/' . $previousMatch->awayTeam->logo) : asset('img/teamlogos/default.png') }}" 
+                                             class="logo-card-item" alt="{{ $previousMatch->awayTeam->name ?? 'Away Team' }} Logo" />
+                                        <span class="team-name-card-item">{{ strtoupper($previousMatch->awayTeam->name ?? 'AWAY TEAM') }}</span>
                                     </div>
-                                </div>
-                                <div class="card-inner">
-                                    <h4 class="comp-label">{{ strtoupper($featured->tournament->name ?? 'FRIENDLY') }}</h4>
-                                    <span class="date">
-                                        <i class="ri-time-line"></i> 
-                                        {{ $featured->match_date->format('M d, Y') }} | {{ strtoupper($featured->stadium ?? 'TBD') }}
-                                    </span>
-                                </div>
+                                @else
+                                    <!-- AZAM FC is away team -->
+                                    <div class="home-team-item">
+                                        <img src="{{ $previousMatch->homeTeam && $previousMatch->homeTeam->logo ? asset('storage/' . $previousMatch->homeTeam->logo) : asset('img/teamlogos/default.png') }}" 
+                                             class="logo-card-item" alt="{{ $previousMatch->homeTeam->name ?? 'Home Team' }} Logo" />
+                                        <span class="team-name-card-item">{{ strtoupper($previousMatch->homeTeam->name ?? 'HOME TEAM') }}</span>
+                                    </div>
+                                    <div class="game-score">
+                                        <span class="result-item">
+                                            <h3>{{ $previousMatch->home_score ?? '0' }}</h3>
+                                        </span>
+                                        <span class="result-item">
+                                            <h3>{{ $previousMatch->away_score ?? '0' }}</h3>
+                                        </span>
+                                    </div>
+                                    <div class="home-team-item">
+                                        <img src="{{ asset('img/logo.png')}}" class="logo-card-item" alt="AZAM FC Logo" />
+                                        <span class="team-name-card-item">AZAM FC</span>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="card-inner">
+                                <h4 class="comp-label">{{ strtoupper($previousMatch->tournament->name ?? 'FRIENDLY') }}</h4>
+                                <span class="date">
+                                    <i class="ri-time-line"></i> 
+                                    {{ $previousMatch->match_date->format('M d, Y') }} | {{ strtoupper($previousMatch->stadium ?? 'TBD') }}
+                                </span>
                             </div>
                         </div>
+                        </a>
                     </div>
                 @endif
                 
-                @if($recentMatches && $recentMatches->count() > 0)
-                    @foreach($recentMatches->take(2) as $index => $match)
-                    <div class="match-home-card">
+                <!-- Next Fixture -->
+                @if($nextFixture)
+                    <div class="match-home-card bg-primary-two">
+                        <a href="{{ route('fixture.show', $nextFixture->id) }}" class="uk-link-reset">
                         <div class="uk-card uk-card-default uk-card-body">
                             <div class="widget-header-wrapper">
                                 <div class="widget-header-wrapper__header">
                                     <header class="widget-header">
-                                        <h2 class="widget-header__title">{{ $index == 0 ? 'LAST MATCH' : 'PREVIOUS MATCH' }}</h2>
+                                        <h2 class="widget-header__title">NEXT FIXTURE</h2>
+                                    </header>
+                                </div>
+                            </div>
+                            <div class="card-tag">
+                                <div class="card-inner-teams-results">
+                                    @php
+                                        $isAzamHomeNext = $nextFixture->homeTeam && stripos($nextFixture->homeTeam->name, 'AZAM') !== false;
+                                    @endphp
+                                    @if($isAzamHomeNext)
+                                        <!-- AZAM FC is home team -->
+                                        <div class="home-team-item">
+                                            <img src="{{ asset('img/logo.png')}}" class="logo-card-item" alt="AZAM FC Logo" />
+                                            <span class="team-name-card-item">AZAM FC</span>
+                                        </div>
+                                        <div class="game-score">
+                                            <span class="result-item">
+                                                <h3>{{ $nextFixture->match_date->format('H:i') }}</h3>
+                                            </span>
+                                        </div>
+                                        <div class="home-team-item">
+                                            <img src="{{ $nextFixture->awayTeam && $nextFixture->awayTeam->logo ? asset('storage/' . $nextFixture->awayTeam->logo) : asset('img/teamlogos/default.png') }}" 
+                                                 class="logo-card-item" alt="{{ $nextFixture->awayTeam->name ?? 'Away Team' }} Logo" />
+                                            <span class="team-name-card-item">{{ strtoupper($nextFixture->awayTeam->name ?? 'AWAY TEAM') }}</span>
+                                        </div>
+                                    @else
+                                        <!-- AZAM FC is away team -->
+                                        <div class="home-team-item">
+                                            <img src="{{ $nextFixture->homeTeam && $nextFixture->homeTeam->logo ? asset('storage/' . $nextFixture->homeTeam->logo) : asset('img/teamlogos/default.png') }}" 
+                                                 class="logo-card-item" alt="{{ $nextFixture->homeTeam->name ?? 'Home Team' }} Logo" />
+                                            <span class="team-name-card-item">{{ strtoupper($nextFixture->homeTeam->name ?? 'HOME TEAM') }}</span>
+                                        </div>
+                                        <div class="game-score">
+                                            <span class="result-item">
+                                                <h3>{{ $nextFixture->match_date->format('H:i') }}</h3>
+                                            </span>
+                                        </div>
+                                        <div class="home-team-item">
+                                            <img src="{{ asset('img/logo.png')}}" class="logo-card-item" alt="AZAM FC Logo" />
+                                            <span class="team-name-card-item">AZAM FC</span>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="card-inner">
+                                    <h4 class="comp-label">{{ strtoupper($nextFixture->tournament->name ?? 'FRIENDLY') }}</h4>
+                                    <span class="date">
+                                        <i class="ri-time-line"></i> 
+                                        {{ $nextFixture->match_date->format('M d, Y') }} | {{ strtoupper($nextFixture->stadium ?? 'TBD') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                @endif
+                
+                <!-- Upcoming Fixtures -->
+                @if($upcomingFixtures && $upcomingFixtures->count() > 0)
+                    @foreach($upcomingFixtures as $index => $fixture)
+                    <div class="match-home-card">
+                        <a href="{{ route('fixture.show', $fixture->id) }}" class="uk-link-reset">
+                        <div class="uk-card uk-card-default uk-card-body">
+                            <div class="widget-header-wrapper">
+                                <div class="widget-header-wrapper__header">
+                                    <header class="widget-header">
+                                        <h2 class="widget-header__title">UPCOMING FIXTURE</h2>
                                     </header>
                                 </div>
                             </div>
                             <div class="card-inner-teams-results">
-                                <div class="home-team-item">
-                                    <img src="{{ asset('img/logo.png')}}" class="logo-card-item" alt="AZAM FC Logo" />
-                                    <span class="team-name-card-item">AZAM FC</span>
-                                </div>
-                                <div class="game-score">
-                                    <span class="result-item">
-                                        <h3>{{ $match->home_score ?? '0' }}</h3>
-                                    </span>
-                                    <span class="result-item">
-                                        <h3>{{ $match->away_score ?? '0' }}</h3>
-                                    </span>
-                                </div>
-                                <div class="home-team-item">
-                                    <img src="{{ $match->opponent_logo ? asset('storage/' . $match->opponent_logo) : asset('img/teamlogos/default.png') }}" 
-                                         class="logo-card-item" alt="{{ $match->opponent }} Logo" />
-                                    <span class="team-name-card-item">{{ strtoupper($match->opponent) }}</span>
-                                </div>
+                                @php
+                                    $isAzamHomeUpcoming = $fixture->homeTeam && stripos($fixture->homeTeam->name, 'AZAM') !== false;
+                                @endphp
+                                @if($isAzamHomeUpcoming)
+                                    <!-- AZAM FC is home team -->
+                                    <div class="home-team-item">
+                                        <img src="{{ asset('img/logo.png')}}" class="logo-card-item" alt="AZAM FC Logo" />
+                                        <span class="team-name-card-item">AZAM FC</span>
+                                    </div>
+                                    <div class="game-score">
+                                        <span class="result-item">
+                                            <h3>{{ $fixture->match_date->format('H:i') }}</h3>
+                                        </span>
+                                    </div>
+                                    <div class="home-team-item">
+                                        <img src="{{ $fixture->awayTeam && $fixture->awayTeam->logo ? asset('storage/' . $fixture->awayTeam->logo) : asset('img/teamlogos/default.png') }}" 
+                                             class="logo-card-item" alt="{{ $fixture->awayTeam->name ?? 'Away Team' }} Logo" />
+                                        <span class="team-name-card-item">{{ strtoupper($fixture->awayTeam->name ?? 'AWAY TEAM') }}</span>
+                                    </div>
+                                @else
+                                    <!-- AZAM FC is away team -->
+                                    <div class="home-team-item">
+                                        <img src="{{ $fixture->homeTeam && $fixture->homeTeam->logo ? asset('storage/' . $fixture->homeTeam->logo) : asset('img/teamlogos/default.png') }}" 
+                                             class="logo-card-item" alt="{{ $fixture->homeTeam->name ?? 'Home Team' }} Logo" />
+                                        <span class="team-name-card-item">{{ strtoupper($fixture->homeTeam->name ?? 'HOME TEAM') }}</span>
+                                    </div>
+                                    <div class="game-score">
+                                        <span class="result-item">
+                                            <h3>{{ $fixture->match_date->format('H:i') }}</h3>
+                                        </span>
+                                    </div>
+                                    <div class="home-team-item">
+                                        <img src="{{ asset('img/logo.png')}}" class="logo-card-item" alt="AZAM FC Logo" />
+                                        <span class="team-name-card-item">AZAM FC</span>
+                                    </div>
+                                @endif
                             </div>
                             <div class="card-inner">
-                                <h4 class="comp-label">{{ strtoupper($match->tournament->name ?? 'FRIENDLY') }}</h4>
+                                <h4 class="comp-label">{{ strtoupper($fixture->tournament->name ?? 'FRIENDLY') }}</h4>
                                 <span class="date">
                                     <i class="ri-time-line"></i> 
-                                    {{ $match->match_date->format('d/m/Y') }} | {{ strtoupper($match->stadium ?? 'TBD') }}
+                                    {{ $fixture->match_date->format('M d, Y') }} | {{ strtoupper($fixture->stadium ?? 'TBD') }}
                                 </span>
                             </div>
                         </div>
+                        </a>
                     </div>
                     @endforeach
                 @endif

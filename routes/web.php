@@ -45,9 +45,45 @@ Route::get('membership', function () {
     return view('/pages/membership');
 });
 
-//Register - View
+//Register - View (Original)
 Route::get('register', function () {
     return view('/pages/register');
+});
+
+// Fan Registration and Authentication Routes
+Route::prefix('fan')->name('fan.')->group(function () {
+    // Guest routes
+    Route::middleware('guest:fan')->group(function () {
+        Route::get('register', [App\Http\Controllers\FanController::class, 'showRegister'])->name('register');
+        Route::post('register', [App\Http\Controllers\FanController::class, 'register'])->name('register.submit');
+        Route::get('login', [App\Http\Controllers\FanController::class, 'showLogin'])->name('login');
+        Route::post('login', [App\Http\Controllers\FanController::class, 'login'])->name('login.submit');
+    });
+    
+    // Authenticated fan routes
+    Route::middleware('auth:fan')->group(function () {
+        Route::get('dashboard', [App\Http\Controllers\FanController::class, 'dashboard'])->name('dashboard');
+        Route::patch('update-jersey', [App\Http\Controllers\FanController::class, 'updateJersey'])->name('update-jersey');
+        Route::post('logout', [App\Http\Controllers\FanController::class, 'logout'])->name('logout');
+        
+        // Jersey orders feature removed - users directed to external shop
+        
+        // Fan messaging routes
+        Route::get('messages', [App\Http\Controllers\FanMessageController::class, 'index'])->name('messages.index');
+        Route::get('messages/create', [App\Http\Controllers\FanMessageController::class, 'create'])->name('messages.create');
+        Route::post('messages', [App\Http\Controllers\FanMessageController::class, 'store'])->name('messages.store');
+        Route::get('messages/{message}', [App\Http\Controllers\FanMessageController::class, 'show'])->name('messages.show');
+        Route::delete('messages/{message}', [App\Http\Controllers\FanMessageController::class, 'destroy'])->name('messages.destroy');
+        
+        // Fan profile routes
+        Route::get('profile', [App\Http\Controllers\FanProfileController::class, 'show'])->name('profile.show');
+        Route::get('profile/edit', [App\Http\Controllers\FanProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('profile', [App\Http\Controllers\FanProfileController::class, 'update'])->name('profile.update');
+        Route::delete('profile/image', [App\Http\Controllers\FanProfileController::class, 'deleteImage'])->name('profile.delete-image');
+    });
+    
+    // API routes for location dropdowns
+    Route::get('api/districts/{region}', [App\Http\Controllers\FanController::class, 'getDistricts'])->name('api.districts');
 });
 
 Route::get('login', function () {
@@ -145,6 +181,14 @@ Route::get('/login', [App\Http\Controllers\Auth\AuthController::class, 'showLogi
 Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login']);
 Route::post('/logout', [App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout');
 
+// Profile Routes (Protected by authentication)
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile/image', [App\Http\Controllers\ProfileController::class, 'deleteImage'])->name('profile.delete-image');
+});
+
 // Admin Routes (Protected by authentication and admin middleware)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
@@ -172,7 +216,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // Fixture Management
     Route::resource('fixtures', App\Http\Controllers\Admin\FixtureController::class);
-    Route::patch('fixtures/{fixture}/status', [App\Http\Controllers\Admin\FixtureController::class, 'updateStatus'])->name('fixtures.update-status');
+    Route::patch('fixtures/{fixture}/status', [App\Http\Controllers\Admin\FixtureController::class, 'updateStatus'])->name('fixtures.updateStatus');
     Route::patch('fixtures/{fixture}/result', [App\Http\Controllers\Admin\FixtureController::class, 'updateResult'])->name('fixtures.update-result');
     Route::get('fixtures/{fixture}/upcoming', [App\Http\Controllers\Admin\FixtureController::class, 'upcoming'])->name('fixtures.upcoming');
     Route::get('fixtures/{fixture}/past', [App\Http\Controllers\Admin\FixtureController::class, 'past'])->name('fixtures.past');
@@ -185,6 +229,49 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('fixtures/{fixture}/events/live', [App\Http\Controllers\Admin\MatchEventController::class, 'getLiveEvents'])->name('fixtures.events.live');
     Route::post('fixtures/{fixture}/events/bulk', [App\Http\Controllers\Admin\MatchEventController::class, 'bulkStore'])->name('fixtures.events.bulk');
     
+    // Admin Notices Management
+    Route::resource('notices', App\Http\Controllers\AdminNoticeController::class);
+    Route::patch('notices/{notice}/toggle-status', [App\Http\Controllers\AdminNoticeController::class, 'toggleStatus'])->name('admin.notices.toggle-status');
+    
+    // Fan Management
+    Route::resource('fans', App\Http\Controllers\Admin\FanAdminController::class);
+    Route::post('fans/{fan}/add-points', [App\Http\Controllers\Admin\FanAdminController::class, 'addPoints'])->name('fans.add-points');
+
+    
+    // Vendor Management
+    Route::resource('vendors', App\Http\Controllers\Admin\VendorController::class);
+    
+    // Message Management
+    Route::resource('messages', App\Http\Controllers\Admin\MessageAdminController::class)->only(['index', 'show']);
+    Route::post('messages/{message}/reply', [App\Http\Controllers\Admin\MessageAdminController::class, 'reply'])->name('messages.reply');
+    Route::patch('messages/{message}/status', [App\Http\Controllers\Admin\MessageAdminController::class, 'updateStatus'])->name('messages.update-status');
+    Route::patch('messages/{message}/priority', [App\Http\Controllers\Admin\MessageAdminController::class, 'updatePriority'])->name('messages.update-priority');
+    Route::post('messages/bulk-update', [App\Http\Controllers\Admin\MessageAdminController::class, 'bulkUpdate'])->name('messages.bulk-update');
+
+    Route::get('messages/stats', [App\Http\Controllers\Admin\MessageAdminController::class, 'getStats'])->name('messages.stats');
+    
+    // Settings Management
+    Route::get('settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+    Route::post('settings/jersey-image', [App\Http\Controllers\Admin\SettingController::class, 'updateJerseyImage'])->name('settings.jersey-image.update');
+    Route::get('settings/jersey-image/remove', [App\Http\Controllers\Admin\SettingController::class, 'removeJerseyImage'])->name('settings.jersey-image.remove');
+    
+    // Mobile App Settings Management
+    Route::get('mobile-app/settings', [App\Http\Controllers\Admin\MobileAppSettingsController::class, 'index'])->name('mobile-app.settings');
+    Route::post('mobile-app/update-config', [App\Http\Controllers\Admin\MobileAppSettingsController::class, 'updateConfig'])->name('mobile-app.update-config');
+    Route::post('mobile-app/upload-logo', [App\Http\Controllers\Admin\MobileAppSettingsController::class, 'uploadLogo'])->name('mobile-app.upload-logo');
+    Route::post('mobile-app/upload-splash', [App\Http\Controllers\Admin\MobileAppSettingsController::class, 'uploadSplashScreen'])->name('mobile-app.upload-splash');
+    Route::post('mobile-app/update-advantages', [App\Http\Controllers\Admin\MobileAppSettingsController::class, 'updateAdvantages'])->name('mobile-app.update-advantages');
+    Route::get('mobile-app/preview', [App\Http\Controllers\Admin\MobileAppSettingsController::class, 'preview'])->name('mobile-app.preview');
+    Route::get('mobile-app/reset-defaults', [App\Http\Controllers\Admin\MobileAppSettingsController::class, 'resetToDefaults'])->name('mobile-app.reset-defaults');
+    
+    // League Management
+    Route::resource('leagues', App\Http\Controllers\Admin\LeagueController::class);
+    Route::get('leagues/api/standings', [App\Http\Controllers\Admin\LeagueController::class, 'getStandings'])->name('admin.leagues.standings');
+    
     // TinyMCE Image Upload
     Route::post('/upload-image', [App\Http\Controllers\AdminController::class, 'uploadImage'])->name('upload.image');
 });
+
+// Public API routes for league standings
+Route::get('/api/league/standings', [App\Http\Controllers\LeagueController::class, 'getStandings'])->name('api.league.standings');
+Route::get('/api/league/seasons', [App\Http\Controllers\LeagueController::class, 'getSeasons'])->name('api.league.seasons');

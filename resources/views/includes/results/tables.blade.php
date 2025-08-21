@@ -6,18 +6,11 @@
                 <nav class="uk-navbar-container">
                     <div class="uk-container">
                         <div uk-navbar>
-
                             <div class="uk-navbar-left">
-
                                 <ul class="uk-navbar-nav plyrposition">
-                                    <li><a href="#pl" uk-scroll>NBC PREMIER LEAGUE</a></li>
-                                    <li> <a href="#asfc" uk-scroll>ASFC</a></li>
-                                    <li><a href="#map" uk-scroll>Mapinduzi Cup</a></li>
-                                    <li><a href="#cafc" uk-scroll>CAF Confederations</a></li>
+                                    <li><a href="#pl" uk-scroll>TANZANIA PREMIER LEAGUE</a></li>
                                 </ul>
-
                             </div>
-
                         </div>
                     </div>
                 </nav>
@@ -25,35 +18,148 @@
             <h4 class="uk-heading-line uk-text-right">
                 <div class="uk-margin">
                     <div class="uk-form-controls">
-                        <select class="uk-select" id="form-stacked-select">
-                            <option>2023/2024</option>
-                            <option>2022/2023</option>
-                            <option>2022/2021</option>
-                            <option>2021/2020</option>
-                            <option>2020/2019</option>
+                        <select class="uk-select" id="season-select">
+                            <option value="{{ date('Y') }}">{{ date('Y') }}</option>
+                            <option value="{{ date('Y') - 1 }}">{{ date('Y') - 1 }}</option>
+                            <option value="{{ date('Y') - 2 }}">{{ date('Y') - 2 }}</option>
+                            <option value="{{ date('Y') - 3 }}">{{ date('Y') - 3 }}</option>
                         </select>
                     </div>
                 </div>
             </h4>
         </div>
     </div>
-    <!-- PL -->
+    
+    <!-- Tanzania Premier League Standings -->
     <div class="uk-container uk-container-medium games-tables" id="pl">
-        <!-- <iframe frameborder="0" scrolling="yes" id="fs-70347"
-                        src="https://www.fastscore.com/widgets/standings/27961/70347?ff=1&fs=12&lh=18&bg=FFFFFF&fc=212529&tfc=2E59A2&ifc=AFAFAF&lbc=DEE2E6&sbr=true&sci=true&sha=true&stl=true&slc=true&tlg=true&tlk=true&mp=true&mw=true&md=true&ml=true&gl=true&gd=true&f=true"
-                        style="width: 100%"></iframe>
-                    <script>
-                    let iframe = document.querySelector("#fs-70347");
-                    window.addEventListener("message", function(e) {
-                        let message = e.data;
-                        iframe.style.height = message.height + "px";
-                        iframe.style.width = message.width + "px";
-                    }, false);
-                    </script> -->
         <div class="uk-card uk-card-default uk-card-body">
-            <iframe frameborder="0" scrolling="yes" width="100%" height="100%"
-                src="https://www.fctables.com/tanzania/premier-league/iframe/?type=table&lang_id=2&country=213&template=638&team=180800&timezone=Europe/Moscow&time=24&po=1&ma=1&wi=1&dr=1&los=1&gf=1&ga=1&gd=1&pts=1&ng=1&form=1&width=520&height=700&font=Verdana&fs=12&lh=22&bg=FFFFFF&fc=333333&logo=1&tlink=1&ths=1&thb=1&thba=FFFFFF&thc=000000&bc=dddddd&hob=f5f5f5&hobc=ebe7e7&lc=333333&sh=1&hfb=1&hbc=3bafda&hfc=FFFFFF"></iframe>
-
+            <div id="loading-spinner" class="uk-text-center uk-margin-large">
+                <div uk-spinner="ratio: 2"></div>
+                <p>Loading league standings...</p>
+            </div>
+            
+            <div id="standings-table" style="display: none;">
+                <div class="uk-overflow-auto">
+                    <table class="uk-table uk-table-striped uk-table-hover uk-table-small">
+                        <thead>
+                            <tr class="uk-background-primary uk-light">
+                                <th class="uk-text-center">#</th>
+                                <th>Team</th>
+                                <th class="uk-text-center">MP</th>
+                                <th class="uk-text-center">W</th>
+                                <th class="uk-text-center">D</th>
+                                <th class="uk-text-center">L</th>
+                                <th class="uk-text-center">GF</th>
+                                <th class="uk-text-center">GA</th>
+                                <th class="uk-text-center">GD</th>
+                                <th class="uk-text-center">PTS</th>
+                                <th class="uk-text-center">Form</th>
+                            </tr>
+                        </thead>
+                        <tbody id="standings-body">
+                            <!-- Dynamic content will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="no-data" style="display: none;" class="uk-text-center uk-margin-large">
+                <p class="uk-text-muted">No standings data available for the selected season.</p>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+// League standings functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const seasonSelect = document.getElementById('season-select');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const standingsTable = document.getElementById('standings-table');
+    const standingsBody = document.getElementById('standings-body');
+    const noDataDiv = document.getElementById('no-data');
+    
+    // Load initial standings
+    loadStandings();
+    
+    // Handle season change
+    seasonSelect.addEventListener('change', function() {
+        loadStandings();
+    });
+    
+    function loadStandings() {
+        const season = seasonSelect.value;
+        
+        // Show loading spinner
+        loadingSpinner.style.display = 'block';
+        standingsTable.style.display = 'none';
+        noDataDiv.style.display = 'none';
+        
+        // Fetch standings data
+        fetch(`/api/league/standings?league=Tanzania Premier League&season=${season}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data.length > 0) {
+                    displayStandings(data.data);
+                } else {
+                    showNoData();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading standings:', error);
+                showNoData();
+            });
+    }
+    
+    function displayStandings(standings) {
+        standingsBody.innerHTML = '';
+        
+        standings.forEach(team => {
+            const row = document.createElement('tr');
+            
+            // Add position-based styling
+            if (team.position <= 3) {
+                row.classList.add('uk-background-muted');
+            }
+            
+            row.innerHTML = `
+                <td class="uk-text-center uk-text-bold">${team.position}</td>
+                <td>
+                    <div class="uk-flex uk-flex-middle">
+                        ${team.team && team.team.logo ? 
+                            `<img src="/storage/${team.team.logo}" alt="${team.team ? team.team.name : 'Team'}" class="uk-border-circle" width="24" height="24" style="margin-right: 8px;">` : 
+                            '<div class="uk-width-small uk-height-small uk-background-muted uk-border-circle" style="margin-right: 8px;"></div>'
+                        }
+                        <span class="uk-text-bold">${team.team ? team.team.name : 'Unknown Team'}</span>
+                    </div>
+                </td>
+                <td class="uk-text-center">${team.matches_played}</td>
+                <td class="uk-text-center uk-text-success">${team.wins}</td>
+                <td class="uk-text-center uk-text-warning">${team.draws}</td>
+                <td class="uk-text-center uk-text-danger">${team.losses}</td>
+                <td class="uk-text-center">${team.goals_for}</td>
+                <td class="uk-text-center">${team.goals_against}</td>
+                <td class="uk-text-center ${team.goal_difference >= 0 ? 'uk-text-success' : 'uk-text-danger'}">
+                    ${team.goal_difference >= 0 ? '+' : ''}${team.goal_difference}
+                </td>
+                <td class="uk-text-center uk-text-bold uk-text-primary">${team.points}</td>
+                <td class="uk-text-center">
+                    <span class="uk-text-small">${team.formatted_form || '-'}</span>
+                </td>
+            `;
+            
+            standingsBody.appendChild(row);
+        });
+        
+        // Hide loading and show table
+        loadingSpinner.style.display = 'none';
+        standingsTable.style.display = 'block';
+    }
+    
+    function showNoData() {
+        loadingSpinner.style.display = 'none';
+        standingsTable.style.display = 'none';
+        noDataDiv.style.display = 'block';
+    }
+});
+</script>

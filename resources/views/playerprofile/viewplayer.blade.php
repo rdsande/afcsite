@@ -138,6 +138,8 @@
                             </div>
                         </div>
                     </div>
+                    
+
                 </li>
                 <li id="uk-tab-5-tabpanel-1" role="tabpanel" aria-labelledby="uk-tab-5-tab-1" class="">
                     <!-- Player stats -->
@@ -285,18 +287,16 @@
                 <div class="uk-card uk-card-default uk-card-body">
                     <div>
                         <h3> <i class="ri-clapperboard-line"></i> VIDEO SHOWREEL</h3>
-                        <div class="uk-grid-small uk-child-width-expand@s uk-text-center" uk-grid>
-                            <div>
-                                @if($player->video_reel_link)
-                                    <a href="https://www.youtube.com/watch?v={{ $player->video_reel_link }}" target="_blank" class="uk-button uk-button-primary uk-button-large">
-                                        <i class="ri-play-circle-line"></i> Watch Video Reel
-                                    </a>
-                                @else
-                                    <button class="uk-button uk-button-default uk-button-large" disabled>
-                                        <i class="ri-play-circle-line"></i> Video Reel Coming Soon
-                                    </button>
-                                @endif
-                            </div>
+                        <div class="uk-margin uk-text-center">
+                            @if($player->video_reel_link)
+                                <div class="player-video-showreel">
+                                    {!! $player->video_reel_link !!}
+                                </div>
+                            @else
+                                <button class="uk-button uk-button-default uk-button-large" disabled>
+                                    <i class="ri-play-circle-line"></i> Video Reel Coming Soon
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -381,3 +381,106 @@
 
 
 @endsection
+
+@push('styles')
+<style>
+.player-video-content {
+    line-height: 1.6;
+}
+
+.player-video-content iframe {
+    max-width: 100%;
+    height: auto;
+    min-height: 315px;
+    border-radius: 8px;
+}
+
+.player-video-content p {
+    margin-bottom: 1rem;
+}
+
+.player-video-content a {
+    color: #1e87f0;
+    text-decoration: none;
+}
+
+.player-video-content a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive video embeds */
+.player-video-content .ql-video {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+}
+
+.player-video-content .ql-video iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Video Showreel Styling */
+.player-video-showreel {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.player-video-showreel iframe {
+    width: 100%;
+    height: 450px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.player-video-showreel .ql-video {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.player-video-showreel .ql-video iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+}
+
+.player-video-showreel p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.player-video-showreel a {
+    color: #1e87f0;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.player-video-showreel a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .player-video-showreel {
+        max-width: 100%;
+        padding: 0 15px;
+    }
+    
+    .player-video-showreel iframe {
+        height: 250px;
+    }
+}
+</style>
+@endpush
