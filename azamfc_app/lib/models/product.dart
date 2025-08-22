@@ -9,6 +9,8 @@ class Product {
   final bool isActive;
   final bool inStock;
   final String? description;
+  final String? externalShopUrl;
+  final List<String> sizes;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -23,6 +25,8 @@ class Product {
     required this.isActive,
     this.inStock = true,
     this.description,
+    this.externalShopUrl,
+    this.sizes = const [],
     required this.createdAt,
     required this.updatedAt,
   });
@@ -41,6 +45,8 @@ class Product {
       isActive: json['is_active'] ?? false,
       inStock: json['in_stock'] ?? true,
       description: json['description'],
+      externalShopUrl: json['external_shop_url'],
+      sizes: json['sizes'] != null ? List<String>.from(json['sizes']) : [],
       createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
       updatedAt: DateTime.tryParse(json['updated_at'] ?? '') ?? DateTime.now(),
     );
@@ -58,6 +64,8 @@ class Product {
       'is_active': isActive,
       'in_stock': inStock,
       'description': description,
+      'external_shop_url': externalShopUrl,
+      'sizes': sizes,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };

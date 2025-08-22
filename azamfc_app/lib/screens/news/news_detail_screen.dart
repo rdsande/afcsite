@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 import '../../constants/app_colors.dart';
 import '../../providers/language_provider.dart';
 import '../../providers/news_provider.dart';
 import '../../models/news.dart';
+import '../../widgets/detail_screen_wrapper.dart';
 
 class NewsDetailScreen extends ConsumerStatefulWidget {
   final String? newsId;
@@ -58,19 +60,10 @@ class _NewsDetailScreenState extends ConsumerState<NewsDetailScreen> {
   Widget build(BuildContext context) {
     final isEnglish = ref.watch(languageProviderProvider).languageCode == 'en';
     
-    return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          isEnglish ? 'News Detail' : 'Maelezo ya Habari',
-          style: const TextStyle(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        backgroundColor: AppColors.backgroundColor,
-        elevation: 0,
-      ),
-      body: _buildBody(context, isEnglish),
+    return DetailScreenWrapper(
+      title: 'News Detail',
+      titleSw: 'Maelezo ya Habari',
+      child: _buildBody(context, isEnglish),
     );
   }
 
@@ -264,12 +257,45 @@ class _NewsDetailScreenState extends ConsumerState<NewsDetailScreen> {
                 const SizedBox(height: 24),
                 
                 // Content
-                Text(
-                  newsArticle!.content,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: AppColors.textPrimary,
-                    height: 1.6,
-                  ),
+                Html(
+                  data: newsArticle!.content,
+                  style: {
+                    "body": Style(
+                      margin: Margins.zero,
+                      padding: HtmlPaddings.zero,
+                      fontSize: FontSize(16),
+                      lineHeight: LineHeight(1.6),
+                      color: AppColors.textPrimary,
+                    ),
+                    "p": Style(
+                      margin: Margins.only(bottom: 16),
+                      fontSize: FontSize(16),
+                      lineHeight: LineHeight(1.6),
+                      color: AppColors.textPrimary,
+                    ),
+                    "h1, h2, h3, h4, h5, h6": Style(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                      margin: Margins.only(top: 16, bottom: 8),
+                    ),
+                    "a": Style(
+                      color: AppColors.primaryBlue,
+                      textDecoration: TextDecoration.underline,
+                    ),
+                    "strong, b": Style(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    "em, i": Style(
+                      fontStyle: FontStyle.italic,
+                    ),
+                    "ul, ol": Style(
+                      margin: Margins.only(bottom: 16),
+                      padding: HtmlPaddings.only(left: 20),
+                    ),
+                    "li": Style(
+                      margin: Margins.only(bottom: 4),
+                    ),
+                  },
                 ),
                 
                 const SizedBox(height: 32),

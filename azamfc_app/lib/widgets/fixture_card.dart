@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../constants/app_colors.dart';
+import 'cached_image_widget.dart';
 
 class FixtureCard extends StatelessWidget {
   final FixtureData fixture;
@@ -197,50 +198,10 @@ class FixtureCard extends StatelessWidget {
   }
 
   Widget _buildTeamLogo(String logoPath) {
-    // If logoPath is empty or null, show placeholder
-    if (logoPath.isEmpty) {
-      return Container(
-        color: AppColors.lightGrey,
-        child: const Icon(
-          Icons.sports_soccer,
-          color: AppColors.grey,
-          size: 30,
-        ),
-      );
-    }
-    
-    if (logoPath.startsWith('http')) {
-      return CachedNetworkImage(
-        imageUrl: logoPath,
-        fit: BoxFit.cover,
-        placeholder: (context, url) => Container(
-          color: AppColors.lightGrey,
-          child: const Icon(
-            Icons.sports_soccer,
-            color: AppColors.grey,
-            size: 30,
-          ),
-        ),
-        errorWidget: (context, url, error) => Container(
-          color: AppColors.lightGrey,
-          child: const Icon(
-            Icons.sports_soccer,
-            color: AppColors.grey,
-            size: 30,
-          ),
-        ),
-      );
-    } else {
-      // Local asset - but since we don't have assets, show placeholder
-      return Container(
-        color: AppColors.lightGrey,
-        child: const Icon(
-          Icons.sports_soccer,
-          color: AppColors.grey,
-          size: 30,
-        ),
-      );
-    }
+    return TeamLogoWidget(
+      logoUrl: logoPath,
+      size: 40,
+    );
   }
 }
 

@@ -12,6 +12,7 @@ class Player {
   final String? height;
   final String? weight;
   final String? bio;
+  final String? videoUrl;
   final bool isActive;
 
   Player({
@@ -26,6 +27,7 @@ class Player {
     this.height,
     this.weight,
     this.bio,
+    this.videoUrl,
     this.isActive = true,
   });
 
@@ -42,6 +44,7 @@ class Player {
       height: json['height'],
       weight: json['weight'],
       bio: json['bio'] ?? json['biography'],
+      videoUrl: json['video_url'] ?? json['videoUrl'],
       isActive: json['is_active'] ?? json['isActive'] ?? true,
     );
   }
@@ -59,6 +62,7 @@ class Player {
       'height': height,
       'weight': weight,
       'bio': bio,
+      'videoUrl': videoUrl,
       'isActive': isActive,
     };
   }

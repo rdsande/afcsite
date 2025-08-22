@@ -5,10 +5,11 @@ import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/app_routes.dart';
 import '../../providers/language_provider.dart';
 import '../../providers/news_provider.dart';
 import '../../models/news.dart';
-
+import '../../utils/text_utils.dart';
 class NewsScreen extends ConsumerStatefulWidget {
   const NewsScreen({super.key});
 
@@ -37,26 +38,15 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
     // Combine featured and latest news
     final allNews = [...featuredNews, ...latestNews];
     
-    return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          isEnglish ? 'News' : 'Habari',
-          style: const TextStyle(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        backgroundColor: AppColors.backgroundColor,
-        elevation: 0,
-      ),
-      body: _buildBody(context, isEnglish, allNews, isLoading, error),
-    );
+    return _buildBody(context, isEnglish, allNews, isLoading, error);
   }
 
-  Widget _buildBody(BuildContext context, bool isEnglish, List<News> news, bool isLoading, String? error) {
+  Widget _buildBody(BuildContext context, bool isEnglish, List<News> allNews, bool isLoading, String? error) {
     if (isLoading) {
       return const Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: AppColors.primaryBlue,
+        ),
       );
     }
 
@@ -68,52 +58,46 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
             Icon(
               Icons.error_outline,
               size: 64,
-              color: AppColors.error,
+              color: AppColors.textLight,
             ),
             const SizedBox(height: 16),
             Text(
-              isEnglish ? 'Failed to load news' : 'Imeshindwa kupakia habari',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppColors.error,
-                fontWeight: FontWeight.w600,
+              isEnglish ? 'Error loading news' : 'Hitilafu katika kupakia habari',
+              style: TextStyle(
+                color: AppColors.textLight,
+                fontSize: 16,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               error,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
+              style: TextStyle(
+                color: AppColors.textLight,
+                fontSize: 14,
               ),
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                ref.read(newsProvider.notifier).fetchAllNews();
-              },
-              child: Text(isEnglish ? 'Retry' : 'Jaribu Tena'),
             ),
           ],
         ),
       );
     }
 
-    if (news.isEmpty) {
+    if (allNews.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.newspaper,
+              Icons.article_outlined,
               size: 64,
-              color: AppColors.textSecondary,
+              color: AppColors.textLight,
             ),
             const SizedBox(height: 16),
             Text(
               isEnglish ? 'No news available' : 'Hakuna habari zilizopo',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w600,
+              style: TextStyle(
+                color: AppColors.textLight,
+                fontSize: 16,
               ),
             ),
           ],
@@ -121,18 +105,14 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: () async {
-        await ref.read(newsProvider.notifier).fetchAllNews();
-      },
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: news.length,
-        itemBuilder: (context, index) {
-          return _buildNewsCard(context, news[index], isEnglish);
-        },
-      ),
-    );
+    return ListView.builder(
+       padding: const EdgeInsets.all(16),
+       itemCount: allNews.length,
+       itemBuilder: (context, index) {
+         final newsItem = allNews[index];
+         return _buildNewsCard(context, newsItem, isEnglish);
+       },
+     );
   }
 
   Widget _buildNewsCard(BuildContext context, News news, bool isEnglish) {
@@ -146,7 +126,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
       ),
       child: InkWell(
         onTap: () {
-          context.push('/news/${news.id}');
+          AppRoutes.goToNewsDetail(context, news.id.toString());
         },
         borderRadius: BorderRadius.circular(12),
         child: Column(
@@ -219,7 +199,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
                   
                   // Content preview
                   Text(
-                    news.content,
+                    TextUtils.createExcerpt(news.content, maxLength: 120),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: AppColors.textSecondary,
                     ),

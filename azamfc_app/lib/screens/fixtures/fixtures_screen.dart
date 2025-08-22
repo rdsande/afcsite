@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/app_routes.dart';
 import '../../providers/language_provider.dart';
 import '../../providers/fixtures_provider.dart';
 import '../../widgets/fixture_card.dart';
@@ -185,7 +186,7 @@ class _FixturesScreenState extends ConsumerState<FixturesScreen>
               padding: const EdgeInsets.only(bottom: 16),
               child: GestureDetector(
                 onTap: () {
-                  context.push('/fixtures/${fixture.id}');
+                  AppRoutes.goToFixtureDetail(context, fixture.id.toString());
                 },
                 child: FixtureCard(
                   fixture: _convertFixtureToFixtureData(fixture),
@@ -282,7 +283,7 @@ class _FixturesScreenState extends ConsumerState<FixturesScreen>
               padding: const EdgeInsets.only(bottom: 16),
               child: GestureDetector(
                 onTap: () {
-                  context.push('/fixtures/${fixture.id}');
+                  AppRoutes.goToFixtureDetail(context, fixture.id.toString());
                 },
                 child: FixtureCard(
                   fixture: _convertFixtureToFixtureData(fixture),

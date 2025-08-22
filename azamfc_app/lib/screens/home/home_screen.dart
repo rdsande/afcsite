@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../constants/app_colors.dart';
 import '../../constants/app_routes.dart';
@@ -9,11 +10,13 @@ import '../../providers/language_provider.dart';
 import '../../providers/news_provider.dart';
 import '../../providers/fixtures_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../widgets/azam_logo.dart';
 import '../../widgets/match_card.dart';
 import '../../widgets/fixture_card.dart';
 import '../../models/news.dart';
 import '../../models/fixture.dart';
+import '../../utils/text_utils.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -30,7 +33,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     // Fetch data when screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(newsProvider.notifier).fetchFeaturedNews();
+      ref.read(newsProvider.notifier).fetchAllNews();
       ref.read(fixturesProvider.notifier).fetchHomeFixtures();
     });
   }
@@ -38,7 +41,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isEnglish = ref.watch(languageProviderProvider).languageCode == 'en';
-    
+
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
@@ -47,16 +50,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               // Greeting Header
               _buildGreetingHeader(context, isEnglish),
-              
+
               // Match Cards Section
               _buildMatchCardsSection(context, isEnglish),
-              
+
               // Latest News Section
               _buildLatestNewsSection(context, isEnglish),
-              
+
               // Tabs
               _buildTabs(context, isEnglish),
-              
+
               // Content based on selected tab
               _selectedTabIndex == 0
                   ? _buildUpcomingMatchesTab(context, isEnglish)
@@ -71,7 +74,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildGreetingHeader(BuildContext context, bool isEnglish) {
     final now = DateTime.now();
     final hour = now.hour;
-    
+    final authState = ref.watch(authProviderProvider);
+
     String greeting;
     if (hour < 12) {
       greeting = isEnglish ? 'GOOD MORNING' : 'ASUBUHI NJEMA';
@@ -80,32 +84,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } else {
       greeting = isEnglish ? 'GOOD EVENING' : 'JIONI NJEMA';
     }
-    
+
+    // Get user's first name or default to 'FAN'
+    String userName = 'FAN';
+    if (authState.isAuthenticated && authState.fan != null) {
+      userName = authState.fan!.firstName.toUpperCase();
+    }
+
     return Container(
       padding: const EdgeInsets.all(24),
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              greeting,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w900,
-                fontSize: 28,
-              ),
+      child: Column(
+        children: [
+          // Greeting Text
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  greeting,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 28,
+                      ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  userName,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: AppColors.primaryBlue,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            Text(
-              'POPAT', // This would come from user data
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppColors.primaryBlue,
-                fontSize: 28,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -122,28 +137,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Text(
                 isEnglish ? 'Latest News' : 'Habari za Hivi Karibuni',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          color: AppColors.textPrimary,
-          fontWeight: FontWeight.w700,
-          fontSize: 18,
-        ),
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                    ),
               ),
               Consumer(
-                          builder: (context, ref, child) {
-                            final blueTheme = ref.watch(blueThemeProvider);
-                            return TextButton(
-                              onPressed: () {
-                                AppRoutes.goToNews(context);
-                              },
-                              child: Text(
-                                isEnglish ? 'View More' : 'Ona Zaidi',
-                                style: TextStyle(
-                                  color: BlueThemeColors.getPrimaryColor(blueTheme),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                builder: (context, ref, child) {
+                  final blueTheme = ref.watch(blueThemeProvider);
+                  return TextButton(
+                    onPressed: () {
+                      AppRoutes.goToNews(context);
+                    },
+                    child: Text(
+                      isEnglish ? 'View More' : 'Ona Zaidi',
+                      style: TextStyle(
+                        color: BlueThemeColors.getPrimaryColor(blueTheme),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -151,8 +166,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Consumer(
             builder: (context, ref, child) {
               final newsState = ref.watch(newsProvider);
-              final news = newsState.featuredNews.take(3).toList();
-              
+              final news = newsState.latestNews.take(5).toList();
+
               if (news.isEmpty) {
                 return Container(
                   height: 120,
@@ -168,61 +183,118 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 );
               }
-              
+
               return Column(
-                children: news.map((newsItem) => GestureDetector(
-                  onTap: () {
-                    AppRoutes.goToNewsDetail(context, newsItem.id.toString());
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceBackground,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                             color: BlueThemeColors.getPrimaryColor(ref.watch(blueThemeProvider)).withOpacity(0.1),
-                             borderRadius: BorderRadius.circular(8),
-                           ),
-                           child: Icon(
-                             Icons.article,
-                             color: BlueThemeColors.getPrimaryColor(ref.watch(blueThemeProvider)),
-                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                newsItem.title,
-                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
+                children: news
+                    .map((newsItem) => GestureDetector(
+                          onTap: () {
+                            AppRoutes.goToNewsDetail(
+                                context, newsItem.id.toString());
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppColors.surfaceBackground,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: newsItem.image != null &&
+                                            newsItem.image!.isNotEmpty
+                                        ? CachedNetworkImage(
+                                            imageUrl: newsItem.image!,
+                                            width: 60,
+                                            height: 60,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) =>
+                                                Container(
+                                              color: BlueThemeColors
+                                                      .getPrimaryColor(ref.watch(
+                                                          blueThemeProvider))
+                                                  .withOpacity(0.1),
+                                              child: Icon(
+                                                Icons.article,
+                                                color: BlueThemeColors
+                                                    .getPrimaryColor(ref.watch(
+                                                        blueThemeProvider)),
+                                              ),
+                                            ),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Container(
+                                              color: BlueThemeColors
+                                                      .getPrimaryColor(ref.watch(
+                                                          blueThemeProvider))
+                                                  .withOpacity(0.1),
+                                              child: Icon(
+                                                Icons.article,
+                                                color: BlueThemeColors
+                                                    .getPrimaryColor(ref.watch(
+                                                        blueThemeProvider)),
+                                              ),
+                                            ),
+                                          )
+                                        : Container(
+                                            color:
+                                                BlueThemeColors.getPrimaryColor(
+                                                        ref.watch(
+                                                            blueThemeProvider))
+                                                    .withOpacity(0.1),
+                                            child: Icon(
+                                              Icons.article,
+                                              color: BlueThemeColors
+                                                  .getPrimaryColor(ref.watch(
+                                                      blueThemeProvider)),
+                                            ),
+                                          ),
+                                  ),
                                 ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                DateFormat('MMM dd, yyyy').format(newsItem.publishedAt),
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: AppColors.textSecondary,
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        newsItem.title,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.normal,
+                                              color: AppColors.textPrimary,
+                                            ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        DateFormat('MMM dd, yyyy')
+                                            .format(newsItem.publishedAt),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: AppColors.textSecondary,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )).toList(),
+                        ))
+                    .toList(),
               );
             },
           ),
@@ -240,7 +312,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           final upcomingFixtures = ref.watch(upcomingFixturesProvider);
           final recentResults = ref.watch(recentResultsProvider);
           final isLoading = ref.watch(fixturesLoadingProvider);
-          
+
           if (isLoading) {
             return Row(
               children: [
@@ -272,7 +344,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ],
             );
           }
-          
+
           return Row(
             children: [
               // Previous Results Card
@@ -290,21 +362,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         AppColors.primaryBlue,
                       ),
               ),
-              
+
               const SizedBox(width: 16),
-              
+
               // Next Match Card
               Expanded(
                 child: upcomingFixtures.isNotEmpty
                     ? _buildMatchCard(
                         context,
                         upcomingFixtures.first,
-                        isEnglish ? 'NEXT MATCH' : 'MECHA IJAYO',
+                        isEnglish ? 'NEXT MATCH' : 'MECHI IJAYO',
                         false,
                         isEnglish,
                       )
                     : _buildEmptyMatchCard(
-                        isEnglish ? 'NO UPCOMING MATCHES' : 'HAKUNA MECHA IJAYO',
+                        isEnglish
+                            ? 'NO UPCOMING MATCHES'
+                            : 'HAKUNA MECHI IJAYO',
                         AppColors.grey,
                       ),
               ),
@@ -326,13 +400,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         children: [
           _buildTab(
             context,
-            isEnglish ? 'UPCOMING MATCHES' : 'MECHA IJAYO',
+            isEnglish ? 'UPCOMING MATCHES' : 'MECHI IJAYO',
             0,
             isEnglish,
           ),
           _buildTab(
             context,
-            isEnglish ? 'MATCH RESULTS' : 'MATOKEO YA MECHA',
+            isEnglish ? 'MATCH RESULTS' : 'MATOKEO YA MECHI',
             1,
             isEnglish,
           ),
@@ -341,9 +415,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildTab(BuildContext context, String label, int index, bool isEnglish) {
+  Widget _buildTab(
+      BuildContext context, String label, int index, bool isEnglish) {
     final isSelected = _selectedTabIndex == index;
-    
+
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -354,16 +429,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: isSelected ? BlueThemeColors.getPrimaryColor(ref.watch(blueThemeProvider)) : Colors.transparent,
+            color: isSelected
+                ? BlueThemeColors.getPrimaryColor(ref.watch(blueThemeProvider))
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
             label,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: isSelected ? AppColors.white : AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
-            ),
+                  color: isSelected ? AppColors.white : AppColors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
             textAlign: TextAlign.center,
           ),
         ),
@@ -394,10 +471,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              isEnglish ? 'Failed to load fixtures' : 'Imeshindwa kupakia michuano',
+              isEnglish
+                  ? 'Failed to load fixtures'
+                  : 'Imeshindwa kupakia michuano',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: AppColors.textLight,
-              ),
+                    color: AppColors.textLight,
+                  ),
             ),
             const SizedBox(height: 8),
             TextButton(
@@ -425,10 +504,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              isEnglish ? 'No upcoming matches' : 'Hakuna mecha ijayo',
+              isEnglish ? 'No upcoming matches' : 'Hakuna MECHI ijayo',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: AppColors.textLight,
-              ),
+                    color: AppColors.textLight,
+                  ),
             ),
           ],
         ),
@@ -437,7 +516,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     // Show only first 3 fixtures
     final limitedFixtures = upcomingFixtures.take(3).toList();
-    
+
     return Column(
       children: [
         SizedBox(
@@ -457,9 +536,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     fixture: _convertFixtureToFixtureData(fixture),
                     isEnglish: isEnglish,
                   ).animate().fadeIn(
-                  duration: const Duration(milliseconds: 600),
-                    delay: Duration(milliseconds: index * 100),
-                  ),
+                        duration: const Duration(milliseconds: 600),
+                        delay: Duration(milliseconds: index * 100),
+                      ),
                 ),
               );
             },
@@ -513,10 +592,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              isEnglish ? 'Failed to load results' : 'Imeshindwa kupakia matokeo',
+              isEnglish
+                  ? 'Failed to load results'
+                  : 'Imeshindwa kupakia matokeo',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: AppColors.textLight,
-              ),
+                    color: AppColors.textLight,
+                  ),
             ),
             const SizedBox(height: 8),
             TextButton(
@@ -544,10 +625,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              isEnglish ? 'No recent results' : 'Hakuna matokeo ya hivi karibuni',
+              isEnglish
+                  ? 'No recent results'
+                  : 'Hakuna matokeo ya hivi karibuni',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: AppColors.textLight,
-              ),
+                    color: AppColors.textLight,
+                  ),
             ),
           ],
         ),
@@ -556,7 +639,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     // Show only first 3 results
     final limitedResults = recentResults.take(3).toList();
-    
+
     return Column(
       children: [
         SizedBox(
@@ -576,9 +659,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     fixture: _convertFixtureToFixtureData(fixture),
                     isEnglish: isEnglish,
                   ).animate().fadeIn(
-                    duration: const Duration(milliseconds: 600),
-                    delay: Duration(milliseconds: index * 100),
-                  ),
+                        duration: const Duration(milliseconds: 600),
+                        delay: Duration(milliseconds: index * 100),
+                      ),
                 ),
               );
             },
@@ -613,7 +696,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   FixtureData _convertFixtureToFixtureData(Fixture fixture) {
     final dateFormat = DateFormat('EEE dd MMM');
     final timeFormat = DateFormat('HH:mm');
-    
+
     return FixtureData(
       homeTeam: fixture.homeTeam,
       awayTeam: fixture.awayTeam,
@@ -629,10 +712,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   // Helper method to build match card from fixture data
-  Widget _buildMatchCard(BuildContext context, Fixture fixture, String title, bool isResult, bool isEnglish) {
+  Widget _buildMatchCard(BuildContext context, Fixture fixture, String title,
+      bool isResult, bool isEnglish) {
     final dateFormat = DateFormat('EEE dd MMM');
     final timeFormat = DateFormat('HH:mm');
-    
+
     return MatchCard(
       title: title,
       subtitle: fixture.tournament,

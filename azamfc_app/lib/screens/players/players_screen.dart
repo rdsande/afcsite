@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/app_routes.dart';
 import '../../providers/language_provider.dart';
 import '../../providers/players_provider.dart';
 import '../../models/player.dart';
@@ -146,7 +147,7 @@ class _PlayersScreenState extends ConsumerState<PlayersScreen> {
       ),
       child: InkWell(
         onTap: () {
-          context.go('/player-detail/${player.id}');
+          AppRoutes.goToPlayerDetail(context, player.id.toString());
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_colors.dart';
 import '../../providers/shop_provider.dart';
 import '../../models/product.dart';
@@ -435,7 +436,38 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     return products.where((product) => product.category == selectedCategory).toList();
   }
 
-  void _navigateToProduct(Product product) {
-    context.push('/shop/product/${product.id}');
+  void _navigateToProduct(Product product) async {
+    // Check if product has external shop URL
+    if (product.externalShopUrl != null && product.externalShopUrl!.isNotEmpty) {
+      final Uri url = Uri.parse(product.externalShopUrl!);
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not open product link'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } else {
+      // Default redirect to main shop website
+      const String defaultShopUrl = 'https://shop.azamfc.co.tz';
+      final Uri url = Uri.parse(defaultShopUrl);
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not open shop website'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
   }
 }

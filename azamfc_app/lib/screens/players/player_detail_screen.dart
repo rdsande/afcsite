@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
-
-import '../../constants/app_colors.dart';
-import '../../providers/language_provider.dart';
-import '../../providers/players_provider.dart';
+import 'package:video_player/video_player.dart';
 import '../../models/player.dart';
+import '../../providers/players_provider.dart';
+import '../../providers/language_provider.dart';
+import '../../constants/app_colors.dart';
+import '../../widgets/detail_screen_wrapper.dart';
 
 class PlayerDetailScreen extends ConsumerStatefulWidget {
   final String? playerId;
@@ -58,14 +59,10 @@ class _PlayerDetailScreenState extends ConsumerState<PlayerDetailScreen> {
   Widget build(BuildContext context) {
     final isEnglish = ref.watch(languageProviderProvider).languageCode == 'en';
     
-    return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          isEnglish ? 'Player Profile' : 'Wasifu wa Mchezaji',
-        ),
-      ),
-      body: isLoading
+    return DetailScreenWrapper(
+      title: 'Player Profile',
+      titleSw: 'Wasifu wa Mchezaji',
+      child: isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )
@@ -334,6 +331,39 @@ class _PlayerDetailScreenState extends ConsumerState<PlayerDetailScreen> {
                               ),
                             ),
                           ],
+                          // Video Reel Section
+                           if (player!.videoUrl != null && player!.videoUrl!.isNotEmpty) ...[
+                             const SizedBox(height: 24),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.shadowColorLight,
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 10),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    isEnglish ? 'Video Reel' : 'Video za Mchezaji',
+                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.primaryBlue,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                   _VideoPlayerWidget(videoUrl: player!.videoUrl!),
+                                ],
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -367,6 +397,103 @@ class _PlayerDetailScreenState extends ConsumerState<PlayerDetailScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _VideoPlayerWidget extends StatefulWidget {
+  final String videoUrl;
+
+  const _VideoPlayerWidget({required this.videoUrl});
+
+  @override
+  State<_VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
+}
+
+class _VideoPlayerWidgetState extends State<_VideoPlayerWidget> {
+  late VideoPlayerController _controller;
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeVideo();
+  }
+
+  void _initializeVideo() async {
+    try {
+      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
+      await _controller.initialize();
+      setState(() {
+        _isInitialized = true;
+      });
+    } catch (e) {
+      print('Error initializing video: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_isInitialized) {
+      return Container(
+        height: 200,
+        decoration: BoxDecoration(
+          color: AppColors.lightGrey,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: AppColors.black,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              child: VideoPlayer(_controller),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (_controller.value.isPlaying) {
+                    _controller.pause();
+                  } else {
+                    _controller.play();
+                  }
+                });
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.3),
+                  shape: BoxShape.circle,
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Icon(
+                  _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                  color: AppColors.white,
+                  size: 32,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

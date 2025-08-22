@@ -92,7 +92,7 @@ class PlayerApiController extends Controller
      */
     public function show(Player $player): JsonResponse
     {
-        if (!$player->isActive()) {
+        if (!$player->is_active) {
             return response()->json([
                 'success' => false,
                 'message' => 'Player not found'
@@ -101,7 +101,7 @@ class PlayerApiController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $player->load(['team'])
+            'data' => $player
         ]);
     }
 }

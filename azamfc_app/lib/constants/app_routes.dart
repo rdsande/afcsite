@@ -16,6 +16,8 @@ import '../screens/account/account_screen.dart';
 import '../screens/players/players_screen.dart';
 import '../screens/players/player_detail_screen.dart';
 import '../screens/search/search_screen.dart';
+import '../screens/admin/admin_screen.dart';
+import '../screens/admin/admin_products_screen.dart';
 
 class AppRoutes {
   // Route names
@@ -34,6 +36,8 @@ class AppRoutes {
   static const String players = '/players';
   static const String playerDetail = '/player-detail';
   static const String search = '/search';
+  static const String admin = '/admin';
+  static const String adminProducts = '/admin/products';
 
   // Routes map
   static final Map<String, WidgetBuilder> routes = {
@@ -48,6 +52,8 @@ class AppRoutes {
     account: (context) => const AccountScreen(),
     players: (context) => const PlayersScreen(),
     search: (context) => const SearchScreen(),
+    admin: (context) => const AdminScreen(),
+    adminProducts: (context) => const AdminProductsScreen(),
   };
 
   // GoRouter configuration for complex routes
@@ -75,25 +81,57 @@ class AppRoutes {
         builder: (context, state) => const MainScreen(),
       ),
       GoRoute(
-        path: newsDetail,
+        path: '/news-detail/:id',
         builder: (context, state) {
           final newsId = state.pathParameters['id'];
           return NewsDetailScreen(newsId: newsId);
         },
       ),
       GoRoute(
-        path: fixtureDetail,
+        path: '/fixture-detail/:id',
         builder: (context, state) {
           final fixtureId = state.pathParameters['id'];
           return FixtureDetailScreen(fixtureId: fixtureId);
         },
       ),
       GoRoute(
-        path: playerDetail,
+        path: '/player-detail/:id',
         builder: (context, state) {
           final playerId = state.pathParameters['id'];
           return PlayerDetailScreen(playerId: playerId);
         },
+      ),
+      GoRoute(
+        path: news,
+        builder: (context, state) => const NewsScreen(),
+      ),
+      GoRoute(
+        path: fixtures,
+        builder: (context, state) => const FixturesScreen(),
+      ),
+      GoRoute(
+        path: shop,
+        builder: (context, state) => const ShopScreen(),
+      ),
+      GoRoute(
+        path: account,
+        builder: (context, state) => const AccountScreen(),
+      ),
+      GoRoute(
+        path: players,
+        builder: (context, state) => const PlayersScreen(),
+      ),
+      GoRoute(
+        path: search,
+        builder: (context, state) => const SearchScreen(),
+      ),
+      GoRoute(
+        path: admin,
+        builder: (context, state) => const AdminScreen(),
+      ),
+      GoRoute(
+        path: adminProducts,
+        builder: (context, state) => const AdminProductsScreen(),
       ),
     ],
   );
@@ -140,18 +178,20 @@ class AppRoutes {
   static void goToPlayers(BuildContext context) => context.go(players);
   static void goToFixtures(BuildContext context) => context.go(fixtures);
   static void goToSearch(BuildContext context) => context.go(search);
+  static void goToAdmin(BuildContext context) => context.go(admin);
+  static void goToAdminProducts(BuildContext context) => context.go(adminProducts);
 
   // Navigation with arguments
   static void goToNewsDetail(BuildContext context, String newsId) {
-    context.go('$newsDetail?id=$newsId');
+    context.go('/news-detail/$newsId');
   }
 
   static void goToFixtureDetail(BuildContext context, String fixtureId) {
-    context.go('$fixtureDetail?id=$fixtureId');
+    context.go('/fixture-detail/$fixtureId');
   }
 
   static void goToPlayerDetail(BuildContext context, String playerId) {
-    context.go('$playerDetail?id=$playerId');
+    context.go('/player-detail/$playerId');
   }
 
   // Push routes (for back navigation)

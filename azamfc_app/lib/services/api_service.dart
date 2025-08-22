@@ -253,7 +253,7 @@ class ApiService {
       };
       
       print('Sending login data: $loginData');
-      final response = await _dio.post('/mobile/fan/login', data: loginData);
+      final response = await _dio.post('/fan/login', data: loginData);
       print('Login response: ${response.statusCode} - ${response.data}');
       
       if (response.statusCode == 200) {
@@ -301,7 +301,7 @@ class ApiService {
       }
       
       print('Sending registration data: $data');
-      final response = await _dio.post('/mobile/fan/register', data: data);
+      final response = await _dio.post('/fan/register', data: data);
       print('Registration response: ${response.statusCode} - ${response.data}');
       
       if (response.statusCode == 201) {

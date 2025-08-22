@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 
 class ImageUtils {
-  // Use localhost for web and 127.0.0.1 for mobile (USB connection)
+  // Use localhost for web and Mac's IP address for mobile devices
   static String get baseUrl {
     if (kIsWeb) {
       return 'http://localhost:8000';
     } else {
-      // For mobile devices connected via USB cable, use 127.0.0.1
-      return 'http://127.0.0.1:8000';
+      // For mobile devices, use Mac's IP address so iPhone can access the server
+      return 'http://172.20.0.177:8000';
     }
   }
   
@@ -27,11 +27,21 @@ class ImageUtils {
     }
     
     // Remove leading slash if present
-    if (relativePath.startsWith('/')) {
-      relativePath = relativePath.substring(1);
+    String cleanPath = relativePath;
+    if (cleanPath.startsWith('/')) {
+      cleanPath = cleanPath.substring(1);
     }
     
-    final fullUrl = '$baseUrl/storage/$relativePath';
+    // Check if it's a storage path (uploaded files) or public path (static assets)
+    String fullUrl;
+    if (cleanPath.startsWith('news/') || cleanPath.startsWith('players/') || cleanPath.startsWith('teams/') || cleanPath.startsWith('storage/')) {
+      // These are uploaded files in storage
+      fullUrl = '$baseUrl/storage/$cleanPath';
+    } else {
+      // These are static assets in public directory
+      fullUrl = '$baseUrl/$cleanPath';
+    }
+    
     print('ImageUtils: Generated full URL: $fullUrl');
     return fullUrl;
   }

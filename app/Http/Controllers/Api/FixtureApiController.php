@@ -87,7 +87,7 @@ class FixtureApiController extends Controller
      */
     public function show(Fixture $fixture): JsonResponse
     {
-        $fixture->load(['tournament', 'homeTeam', 'awayTeam', 'events']);
+        $fixture->load(['tournament', 'homeTeam', 'awayTeam', 'matchEvents']);
 
         return response()->json([
             'success' => true,

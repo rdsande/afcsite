@@ -37,9 +37,13 @@ class NewsApiController extends Controller
     /**
      * Get a specific news article
      */
-    public function show(News $news): JsonResponse
+    public function show($newsId): JsonResponse
     {
-        if (!$news->isPublished()) {
+        $news = News::published()
+            ->with(['author', 'category'])
+            ->find($newsId);
+
+        if (!$news) {
             return response()->json([
                 'success' => false,
                 'message' => 'News article not found'
@@ -51,7 +55,7 @@ class NewsApiController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $news->load(['author', 'category'])
+            'data' => $news
         ]);
     }
 

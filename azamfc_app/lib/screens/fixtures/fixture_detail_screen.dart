@@ -7,7 +7,8 @@ import '../../constants/app_colors.dart';
 import '../../providers/language_provider.dart';
 import '../../providers/fixtures_provider.dart';
 import '../../models/fixture.dart';
-
+import '../../widgets/cached_image_widget.dart';
+import '../../widgets/detail_screen_wrapper.dart';
 class FixtureDetailScreen extends ConsumerStatefulWidget {
   final String? fixtureId;
 
@@ -58,19 +59,10 @@ class _FixtureDetailScreenState extends ConsumerState<FixtureDetailScreen> {
   Widget build(BuildContext context) {
     final isEnglish = ref.watch(languageProviderProvider).languageCode == 'en';
     
-    return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          isEnglish ? 'Fixture Detail' : 'Maelezo ya Mchuano',
-          style: const TextStyle(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        backgroundColor: AppColors.backgroundColor,
-        elevation: 0,
-      ),
-      body: _buildBody(context, isEnglish),
+    return DetailScreenWrapper(
+      title: 'Match Details',
+      titleSw: 'Maelezo ya Mchezo',
+      child: _buildBody(context, isEnglish),
     );
   }
 
@@ -331,65 +323,10 @@ class _FixtureDetailScreenState extends ConsumerState<FixtureDetailScreen> {
   }
 
   Widget _buildTeamLogo(String? logoPath) {
-    if (logoPath == null || logoPath.isEmpty) {
-      return Container(
-        width: 80,
-        height: 80,
-        decoration: BoxDecoration(
-          color: AppColors.lightGrey,
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(
-          Icons.sports_soccer,
-          size: 40,
-          color: AppColors.grey,
-        ),
-      );
-    }
-
-    if (logoPath.startsWith('http')) {
-      return CachedNetworkImage(
-        imageUrl: logoPath,
-        width: 80,
-        height: 80,
-        fit: BoxFit.contain,
-        placeholder: (context, url) => Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: AppColors.lightGrey,
-            shape: BoxShape.circle,
-          ),
-          child: const CircularProgressIndicator(),
-        ),
-        errorWidget: (context, url, error) => Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: AppColors.lightGrey,
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.sports_soccer,
-            size: 40,
-            color: AppColors.grey,
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      width: 80,
-      height: 80,
-      decoration: BoxDecoration(
-        color: AppColors.lightGrey,
-        shape: BoxShape.circle,
-      ),
-      child: const Icon(
-        Icons.sports_soccer,
-        size: 40,
-        color: AppColors.grey,
-      ),
+    return TeamLogoWidget(
+      logoUrl: logoPath,
+      size: 80,
+      borderRadius: BorderRadius.circular(40), // Circular border radius
     );
   }
 
