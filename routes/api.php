@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\NewsApiController;
 use App\Http\Controllers\Api\FixtureApiController;
 use App\Http\Controllers\Api\PlayerApiController;
 use App\Http\Controllers\Api\FanApiController;
+use App\Http\Controllers\Api\ShopApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,4 +64,10 @@ Route::prefix('mobile')->name('mobile.')->group(function () {
         Route::post('/fan/logout', [FanApiController::class, 'logout'])->name('fan.logout');
         Route::get('/fan/points', [FanApiController::class, 'getPoints'])->name('fan.points');
     });
+
+    // Shop endpoints (public)
+    Route::get('/shop/products', [ShopApiController::class, 'getProducts'])->name('shop.products');
+    Route::get('/shop/products/featured', [ShopApiController::class, 'getFeaturedProducts'])->name('shop.products.featured');
+    Route::get('/shop/products/category/{category}', [ShopApiController::class, 'getProductsByCategory'])->name('shop.products.category');
+    Route::get('/shop/products/{id}', [ShopApiController::class, 'getProduct'])->name('shop.products.show');
 });

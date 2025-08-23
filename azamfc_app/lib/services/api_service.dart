@@ -7,10 +7,10 @@ import '../models/fan.dart';
 import '../models/product.dart';
 
 class ApiService {
-  // Use localhost for web and 127.0.0.1 for mobile (USB connection)
+  // Use 127.0.0.1 for both web and mobile to match Laravel server
   static String get baseUrl {
     if (kIsWeb) {
-      return 'http://localhost:8000/api/mobile';
+      return 'http://127.0.0.1:8000/api/mobile';
     } else {
       // For mobile devices connected via USB cable, use 127.0.0.1
       return 'http://127.0.0.1:8000/api/mobile';
