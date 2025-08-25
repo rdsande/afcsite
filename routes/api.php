@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\FixtureApiController;
 use App\Http\Controllers\Api\PlayerApiController;
 use App\Http\Controllers\Api\FanApiController;
 use App\Http\Controllers\Api\ShopApiController;
+use App\Http\Controllers\Api\AdminNoticeApiController;
+use App\Http\Controllers\Api\JerseyApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +55,9 @@ Route::prefix('mobile')->name('mobile.')->group(function () {
     Route::get('/regions', [FanApiController::class, 'getRegions'])->name('regions');
     Route::get('/districts/{regionId}', [FanApiController::class, 'getDistricts'])->name('districts');
 
+    // Fans endpoints (public)
+    Route::get('/fans', [FanApiController::class, 'getAllFans'])->name('fans.index');
+
     // Fan authentication endpoints
     Route::post('/fan/register', [FanApiController::class, 'register'])->name('fan.register');
     Route::post('/fan/login', [FanApiController::class, 'login'])->name('fan.login');
@@ -63,6 +68,8 @@ Route::prefix('mobile')->name('mobile.')->group(function () {
         Route::put('/fan/profile', [FanApiController::class, 'updateProfile'])->name('fan.updateProfile');
         Route::post('/fan/logout', [FanApiController::class, 'logout'])->name('fan.logout');
         Route::get('/fan/points', [FanApiController::class, 'getPoints'])->name('fan.points');
+        Route::get('/fan/jersey', [FanApiController::class, 'getJersey'])->name('fan.jersey');
+        Route::put('/fan/jersey', [FanApiController::class, 'updateJersey'])->name('fan.updateJersey');
     });
 
     // Shop endpoints (public)
@@ -70,4 +77,14 @@ Route::prefix('mobile')->name('mobile.')->group(function () {
     Route::get('/shop/products/featured', [ShopApiController::class, 'getFeaturedProducts'])->name('shop.products.featured');
     Route::get('/shop/products/category/{category}', [ShopApiController::class, 'getProductsByCategory'])->name('shop.products.category');
     Route::get('/shop/products/{id}', [ShopApiController::class, 'getProduct'])->name('shop.products.show');
+
+    // Admin notices endpoints (public)
+    Route::get('/admin-notices', [AdminNoticeApiController::class, 'index'])->name('admin-notices.index');
+    Route::get('/admin-notices/dashboard', [AdminNoticeApiController::class, 'forDashboard'])->name('admin-notices.dashboard');
+
+    // Jersey endpoints (public)
+    Route::get('/jerseys', [JerseyApiController::class, 'index'])->name('jerseys.index');
+    Route::get('/jerseys/types', [JerseyApiController::class, 'getTypes'])->name('jerseys.types');
+    Route::get('/jerseys/type/{type}', [JerseyApiController::class, 'getByType'])->name('jerseys.byType');
+    Route::get('/jerseys/{jersey}', [JerseyApiController::class, 'show'])->name('jerseys.show');
 });

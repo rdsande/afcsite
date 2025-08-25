@@ -2,18 +2,103 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/app_colors.dart';
 import '../../providers/language_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../constants/app_routes.dart';
+import '../../services/api_service.dart';
 
-class AccountScreen extends ConsumerWidget {
+class AccountScreen extends ConsumerStatefulWidget {
   const AccountScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AccountScreen> createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends ConsumerState<AccountScreen> {
+  final ApiService _apiService = ApiService();
+  Map<String, dynamic>? _fanPoints;
+  List<Map<String, dynamic>> _adminNotices = [];
+  Map<String, dynamic>? _fanJersey;
+  Map<String, dynamic>? _jerseyTypes;
+  List<Map<String, dynamic>> _availableJerseys = [];
+  bool _isLoadingPoints = true;
+  bool _isLoadingNotices = true;
+  bool _isLoadingJersey = true;
+  bool _isLoadingJerseyTypes = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final authState = ref.read(authProviderProvider);
+    if (authState.isAuthenticated) {
+      // Get token from SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      
+      if (token != null) {
+        // Load fan points
+        final points = await _apiService.getFanPoints(token);
+        if (mounted) {
+          setState(() {
+            _fanPoints = points;
+            _isLoadingPoints = false;
+          });
+        }
+
+        // Load fan jersey
+        final jersey = await _apiService.getFanJersey(token);
+        if (mounted) {
+          setState(() {
+            _fanJersey = jersey;
+            _isLoadingJersey = false;
+          });
+        }
+
+        // Load jersey types and available jerseys
+        final jerseyTypes = await _apiService.getJerseyTypes();
+        final availableJerseys = await _apiService.getAllJerseys();
+        if (mounted) {
+          setState(() {
+            _jerseyTypes = jerseyTypes;
+            _availableJerseys = availableJerseys;
+            _isLoadingJerseyTypes = false;
+          });
+        }
+      } else {
+        setState(() {
+          _isLoadingPoints = false;
+          _isLoadingJersey = false;
+          _isLoadingJerseyTypes = false;
+        });
+      }
+    } else {
+      setState(() {
+        _isLoadingPoints = false;
+        _isLoadingJersey = false;
+        _isLoadingJerseyTypes = false;
+      });
+    }
+
+    // Load admin notices
+    final notices = await _apiService.getAdminNotices();
+    if (mounted) {
+      setState(() {
+        _adminNotices = notices;
+        _isLoadingNotices = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final isEnglish = ref.watch(languageProviderProvider).languageCode == 'en';
     final authState = ref.watch(authProviderProvider);
     
@@ -133,78 +218,86 @@ class AccountScreen extends ConsumerWidget {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          // Profile Image
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primaryBlue.withOpacity(0.1),
-            ),
-            child: fan.profileImage != null
-                ? ClipOval(
-                    child: CachedNetworkImage(
-                      imageUrl: fan.profileImage!,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => Icon(
+          // Top Row with Profile Image and Info
+          Row(
+            children: [
+              // Profile Image
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.primaryBlue.withOpacity(0.1),
+                ),
+                child: fan.profileImage != null
+                    ? ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: fan.profileImage!,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => Icon(
+                            Icons.person,
+                            size: 40,
+                            color: AppColors.primaryBlue,
+                          ),
+                        ),
+                      )
+                    : Icon(
                         Icons.person,
                         size: 40,
                         color: AppColors.primaryBlue,
                       ),
-                    ),
-                  )
-                : Icon(
-                    Icons.person,
-                    size: 40,
-                    color: AppColors.primaryBlue,
-                  ),
-          ),
-          const SizedBox(width: 16),
-          
-          // Profile Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  fan.fullName,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  fan.email,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
+              ),
+              const SizedBox(width: 16),
+              
+              // Profile Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.location_on,
-                      size: 16,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 4),
                     Text(
-                  fan.location ?? 'No location',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
+                      fan.fullName,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      fan.email,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          size: 16,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            fan.location ?? 'No location',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+          const SizedBox(height: 16),
           
-          // Enhanced Points Display
+          // Points Display (moved to separate row)
           _buildPointsCard(context, isEnglish),
         ],
       ),
@@ -530,12 +623,21 @@ class AccountScreen extends ConsumerWidget {
   }
 
   Widget _buildPointsCard(BuildContext context, bool isEnglish) {
-    // Demo points data
-    final totalPoints = 1250;
+    if (_isLoadingPoints) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        height: 200,
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    final totalPoints = _fanPoints?['total_points'] ?? 0;
     final pointsBreakdown = {
-      'login': {'points': 450, 'label': isEnglish ? 'Daily Login' : 'Kuingia Kila Siku'},
-      'matches': {'points': 600, 'label': isEnglish ? 'Match Wins' : 'Ushindi wa Mechi'},
-      'bonus': {'points': 200, 'label': isEnglish ? 'Special Bonus' : 'Bonus Maalum'},
+      'login': {'points': _fanPoints?['daily_login_points'] ?? 0, 'label': isEnglish ? 'Daily Login' : 'Kuingia Kila Siku'},
+      'matches': {'points': _fanPoints?['match_points'] ?? 0, 'label': isEnglish ? 'Match Wins' : 'Ushindi wa Mechi'},
+      'bonus': {'points': _fanPoints?['bonus_points'] ?? 0, 'label': isEnglish ? 'Special Bonus' : 'Bonus Maalum'},
     };
 
     return Container(
@@ -685,8 +787,13 @@ class AccountScreen extends ConsumerWidget {
   }
 
   void _showJerseyEditModal(BuildContext context, bool isEnglish) {
-    final TextEditingController nameController = TextEditingController(text: 'DEMO FAN');
-    final TextEditingController numberController = TextEditingController(text: '10');
+    final TextEditingController nameController = TextEditingController(
+      text: _fanJersey?['jersey_name'] ?? 'AZAM FAN'
+    );
+    final TextEditingController numberController = TextEditingController(
+      text: _fanJersey?['jersey_number']?.toString() ?? '1'
+    );
+    String selectedJerseyType = _fanJersey?['jersey_type'] ?? 'home';
 
     showDialog(
       context: context,
@@ -781,6 +888,88 @@ class AccountScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             
+            // Jersey Type Field
+            Text(
+              isEnglish ? 'Jersey Type' : 'Aina ya Jezi',
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            StatefulBuilder(
+              builder: (context, setState) {
+                return DropdownButtonFormField<String>(
+                  value: selectedJerseyType,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: AppColors.textSecondary.withOpacity(0.3)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: AppColors.primaryBlue, width: 2),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  dropdownColor: AppColors.cardBackground,
+                  style: TextStyle(color: AppColors.textPrimary),
+                  items: _isLoadingJerseyTypes || _jerseyTypes == null
+                      ? [
+                          DropdownMenuItem(
+                            value: 'home',
+                            child: Text(isEnglish ? 'Home Jersey' : 'Jezi ya Nyumbani'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'away',
+                            child: Text(isEnglish ? 'Away Jersey' : 'Jezi ya Nje'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'third',
+                            child: Text(isEnglish ? 'Third Jersey' : 'Jezi ya Tatu'),
+                          ),
+                        ]
+                      : (_jerseyTypes!['data'] as List<dynamic>).map<DropdownMenuItem<String>>((jerseyType) {
+                          final type = jerseyType['type'] as String;
+                          final name = jerseyType['name'] as String;
+                          final isAvailable = jerseyType['available'] as bool;
+                          
+                          return DropdownMenuItem(
+                            value: type,
+                            enabled: isAvailable,
+                            child: Row(
+                              children: [
+                                Text(
+                                  name,
+                                  style: TextStyle(
+                                    color: isAvailable ? AppColors.textPrimary : AppColors.textSecondary,
+                                  ),
+                                ),
+                                if (!isAvailable) const SizedBox(width: 8),
+                                if (!isAvailable) Text(
+                                  isEnglish ? '(Not Available)' : '(Haipatikani)',
+                                  style: TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        selectedJerseyType = newValue;
+                      });
+                    }
+                  },
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            
             // Info text
             Container(
               padding: const EdgeInsets.all(12),
@@ -828,7 +1017,7 @@ class AccountScreen extends ConsumerWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               // Validate inputs
               final name = nameController.text.trim().toUpperCase();
               final numberText = numberController.text.trim();
@@ -858,20 +1047,58 @@ class AccountScreen extends ConsumerWidget {
                 return;
               }
               
-              // TODO: Save jersey details to backend/local storage
-              Navigator.pop(context);
-              
-              // Show success message
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    isEnglish 
-                        ? 'Jersey details updated successfully!'
-                        : 'Maelezo ya jezi yamebadilishwa kikamilifu!',
+              try {
+                // Get auth token
+                final prefs = await SharedPreferences.getInstance();
+                final token = prefs.getString('auth_token');
+                
+                if (token != null) {
+                  // Update jersey via API
+                  await _apiService.updateFanJersey(token, name, number, jerseyType: selectedJerseyType);
+                  
+                  // Update local state
+                  setState(() {
+                    _fanJersey = {
+                      'jersey_name': name,
+                      'jersey_number': number,
+                      'jersey_type': selectedJerseyType,
+                      'fan_name': _fanJersey?['fan_name'] ?? 'Fan',
+                    };
+                  });
+                  
+                  Navigator.pop(context);
+                  
+                  // Show success message
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        isEnglish 
+                            ? 'Jersey details updated successfully!'
+                            : 'Maelezo ya jezi yamebadilishwa kikamilifu!',
+                      ),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        isEnglish ? 'Authentication required' : 'Uthibitisho unahitajika',
+                      ),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      isEnglish ? 'Failed to update jersey details' : 'Imeshindwa kubadilisha maelezo ya jezi',
+                    ),
+                    backgroundColor: Colors.red,
                   ),
-                  backgroundColor: Colors.green,
-                ),
-              );
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryBlue,
@@ -1103,14 +1330,6 @@ class AccountScreen extends ConsumerWidget {
               height: 240,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.primaryBlue,
-                    AppColors.primaryBlue.withOpacity(0.8),
-                  ],
-                ),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.primaryBlue.withOpacity(0.3),
@@ -1121,17 +1340,58 @@ class AccountScreen extends ConsumerWidget {
               ),
               child: Stack(
                 children: [
-                  // Jersey base design
+                  // Jersey background image
                   Positioned.fill(
-                    child: Container(
-                      margin: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
-                          width: 2,
-                        ),
-                      ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: _isLoadingJersey
+                          ? Container(
+                              color: AppColors.primaryBlue.withOpacity(0.3),
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                          : _fanJersey?['jersey_image_url'] != null
+                              ? CachedNetworkImage(
+                                  imageUrl: _fanJersey!['jersey_image_url'],
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(
+                                    color: AppColors.primaryBlue.withOpacity(0.3),
+                                    child: const Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) {
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            AppColors.primaryBlue,
+                                            AppColors.primaryBlue.withOpacity(0.8),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        AppColors.primaryBlue,
+                                        AppColors.primaryBlue.withOpacity(0.8),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                     ),
                   ),
                   
@@ -1141,7 +1401,9 @@ class AccountScreen extends ConsumerWidget {
                     left: 0,
                     right: 0,
                     child: Text(
-                      'DEMO FAN', // Demo jersey name
+                      _isLoadingJersey 
+                          ? 'LOADING...' 
+                          : (_fanJersey?['jersey_name'] ?? 'AZAM FAN'),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Colors.white,
@@ -1158,7 +1420,9 @@ class AccountScreen extends ConsumerWidget {
                     left: 0,
                     right: 0,
                     child: Text(
-                      '10', // Demo jersey number
+                      _isLoadingJersey 
+                          ? '...' 
+                          : (_fanJersey?['jersey_number']?.toString() ?? '1'),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Colors.white,
@@ -1317,17 +1581,17 @@ class AccountScreen extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: (shop['isOpen'] as bool) 
+                        color: (shop['isOpen'] as bool? ?? false) 
                             ? Colors.green.withOpacity(0.1)
                             : Colors.red.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        (shop['isOpen'] as bool) 
+                        (shop['isOpen'] as bool? ?? false) 
                             ? (isEnglish ? 'Open' : 'Imefunguka')
                             : (isEnglish ? 'Closed' : 'Imefungwa'),
                         style: TextStyle(
-                          color: (shop['isOpen'] as bool) ? Colors.green : Colors.red,
+                          color: (shop['isOpen'] as bool? ?? false) ? Colors.green : Colors.red,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -1397,27 +1661,6 @@ class AccountScreen extends ConsumerWidget {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.primaryBlue,
                           side: BorderSide(color: AppColors.primaryBlue),
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          // TODO: Implement directions functionality
-                        },
-                        icon: const Icon(Icons.directions, size: 16),
-                        label: Text(
-                          isEnglish ? 'Directions' : 'Muelekeo',
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -1561,25 +1804,19 @@ class AccountScreen extends ConsumerWidget {
   }
 
   Widget _buildAdminNoticesSection(BuildContext context, bool isEnglish) {
-    // Demo admin notices
-    final demoNotices = [
-      {
-        'type': 'info',
-        'title': isEnglish ? 'Welcome to the new season!' : 'Karibu msimu mpya!',
-        'message': isEnglish 
-            ? 'Get ready for an exciting season with Azam FC. New matches and events coming soon!'
-            : 'Jiandae kwa msimu wa kusisimua na Azam FC. Mechi na matukio mapya yanakuja hivi karibuni!',
-        'isDismissible': true,
-      },
-      {
-        'type': 'warning',
-        'title': isEnglish ? 'Points Update' : 'Sasisho la Pointi',
-        'message': isEnglish 
-            ? 'Remember to login daily to earn bonus points. Every login counts!'
-            : 'Kumbuka kuingia kila siku ili kupata pointi za ziada. Kila kuingia kunahesabika!',
-        'isDismissible': false,
-      },
-    ];
+    if (_isLoadingNotices) {
+      return Container(
+        padding: const EdgeInsets.all(20),
+        height: 100,
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (_adminNotices.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -1616,14 +1853,14 @@ class AccountScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           
-          ...demoNotices.map((notice) => Container(
+          ..._adminNotices.map((notice) => Container(
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: _getNoticeColor(notice['type'] as String).withOpacity(0.1),
+              color: _getNoticeColor(notice['type'] as String? ?? 'info').withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: _getNoticeColor(notice['type'] as String).withOpacity(0.3),
+                color: _getNoticeColor(notice['type'] as String? ?? 'info').withOpacity(0.3),
                 width: 1,
               ),
             ),
@@ -1631,8 +1868,8 @@ class AccountScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
-                  _getNoticeIcon(notice['type'] as String),
-                  color: _getNoticeColor(notice['type'] as String),
+                  _getNoticeIcon(notice['type'] as String? ?? 'info'),
+                  color: _getNoticeColor(notice['type'] as String? ?? 'info'),
                   size: 20,
                 ),
                 const SizedBox(width: 12),
@@ -1641,7 +1878,7 @@ class AccountScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        notice['title'] as String,
+                        notice['title'] as String? ?? '',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.w600,
@@ -1649,7 +1886,7 @@ class AccountScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        notice['message'] as String,
+                        notice['content'] as String? ?? '',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppColors.textSecondary,
                         ),
@@ -1657,7 +1894,7 @@ class AccountScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                if (notice['isDismissible'] as bool)
+                if (notice['is_dismissible'] as bool? ?? false)
                   IconButton(
                     onPressed: () {
                       // TODO: Implement dismiss functionality

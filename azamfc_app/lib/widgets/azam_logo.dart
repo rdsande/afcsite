@@ -51,49 +51,29 @@ class AzamLogo extends StatelessWidget {
   }
 
   Widget _buildSimpleLogo() {
-    // Simple logo using basic shapes instead of CustomPaint
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Football icon
-        Container(
-          width: size * 0.3,
-          height: size * 0.3,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.black,
-          ),
-          child: Center(
-            child: Container(
-              width: size * 0.15,
-              height: size * 0.15,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.white,
+    // Use the actual Azam FC logo image from assets
+    return ClipOval(
+      child: Image.asset(
+        'assets/images/azamfclogo.png',
+        width: size * 0.8,
+        height: size * 0.8,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          // Fallback to simple text if image fails to load
+          return Center(
+            child: Text(
+              'AZAM\nFC',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.primaryBlue,
+                fontSize: size * 0.15,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.0,
               ),
             ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        // AZAM text
-        Text(
-          'AZAM',
-          style: TextStyle(
-            color: AppColors.primaryBlue,
-            fontSize: size * 0.2,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-          ),
-        ),
-        Text(
-          '2004',
-          style: TextStyle(
-            color: AppColors.secondaryRed,
-            fontSize: size * 0.15,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
+          );
+        },
+      ),
     );
   }
 

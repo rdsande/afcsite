@@ -29,6 +29,7 @@ class Fan extends Authenticatable
         'favorite_player_id',
         'favorite_jersey_number',
         'favorite_jersey_name',
+        'favorite_jersey_type',
         'points',
         'last_login',
         'profile_image',

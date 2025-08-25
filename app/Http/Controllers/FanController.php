@@ -128,13 +128,20 @@ class FanController extends Controller
         $request->validate([
             'favorite_jersey_name' => 'nullable|string|max:20',
             'favorite_jersey_number' => 'nullable|integer|min:1|max:99',
+            'favorite_jersey_type' => 'nullable|in:home,away,third',
         ]);
 
         $fan = Auth::guard('fan')->user();
-        $fan->update([
+        $updateData = [
             'favorite_jersey_name' => $request->favorite_jersey_name,
             'favorite_jersey_number' => $request->favorite_jersey_number,
-        ]);
+        ];
+        
+        if ($request->has('favorite_jersey_type')) {
+            $updateData['favorite_jersey_type'] = $request->favorite_jersey_type;
+        }
+        
+        $fan->update($updateData);
 
         return redirect()->route('fan.dashboard')->with('success', 'Jersey details updated successfully!');
     }

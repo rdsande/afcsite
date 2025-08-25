@@ -255,6 +255,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('settings/jersey-image', [App\Http\Controllers\Admin\SettingController::class, 'updateJerseyImage'])->name('settings.jersey-image.update');
     Route::get('settings/jersey-image/remove', [App\Http\Controllers\Admin\SettingController::class, 'removeJerseyImage'])->name('settings.jersey-image.remove');
     
+    // Jersey Management
+    Route::post('jerseys/upload', [App\Http\Controllers\Admin\SettingController::class, 'uploadJersey'])->name('jerseys.upload');
+    Route::delete('jerseys/{jersey}', [App\Http\Controllers\Admin\SettingController::class, 'deleteJersey'])->name('jerseys.delete');
+    
     // Mobile App Settings Management
     Route::get('mobile-app/settings', [App\Http\Controllers\Admin\MobileAppSettingsController::class, 'index'])->name('mobile-app.settings');
     Route::post('mobile-app/update-config', [App\Http\Controllers\Admin\MobileAppSettingsController::class, 'updateConfig'])->name('mobile-app.update-config');

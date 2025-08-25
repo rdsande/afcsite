@@ -12,6 +12,7 @@ import '../fixtures/fixtures_screen.dart';
 import '../shop/shop_screen.dart';
 import '../account/account_screen.dart';
 import '../players/players_screen.dart';
+import '../fans_screen.dart';
 import '../search/search_screen.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
@@ -189,10 +190,39 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             ),
           ),
           
+          // Fans button
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FansScreen(),
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.favorite_outline,
+              color: AppColors.textPrimary,
+              size: 24,
+            ),
+          ),
+          
           // Centered Logo
           Expanded(
             child: Center(
-              child: const AzamLogo(size: 32),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.shadowColor.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: const AzamLogo(size: 60),
+              ),
             ),
           ),
           

@@ -18,6 +18,7 @@ import '../screens/players/player_detail_screen.dart';
 import '../screens/search/search_screen.dart';
 import '../screens/admin/admin_screen.dart';
 import '../screens/admin/admin_products_screen.dart';
+import '../screens/fans_screen.dart';
 
 class AppRoutes {
   // Route names
@@ -36,6 +37,7 @@ class AppRoutes {
   static const String players = '/players';
   static const String playerDetail = '/player-detail';
   static const String search = '/search';
+  static const String fans = '/fans';
   static const String admin = '/admin';
   static const String adminProducts = '/admin/products';
 
@@ -52,6 +54,7 @@ class AppRoutes {
     account: (context) => const AccountScreen(),
     players: (context) => const PlayersScreen(),
     search: (context) => const SearchScreen(),
+    fans: (context) => const FansScreen(),
     admin: (context) => const AdminScreen(),
     adminProducts: (context) => const AdminProductsScreen(),
   };
@@ -126,6 +129,10 @@ class AppRoutes {
         builder: (context, state) => const SearchScreen(),
       ),
       GoRoute(
+        path: fans,
+        builder: (context, state) => const FansScreen(),
+      ),
+      GoRoute(
         path: admin,
         builder: (context, state) => const AdminScreen(),
       ),
@@ -178,6 +185,7 @@ class AppRoutes {
   static void goToPlayers(BuildContext context) => context.go(players);
   static void goToFixtures(BuildContext context) => context.go(fixtures);
   static void goToSearch(BuildContext context) => context.go(search);
+  static void goToFans(BuildContext context) => context.go(fans);
   static void goToAdmin(BuildContext context) => context.go(admin);
   static void goToAdminProducts(BuildContext context) => context.go(adminProducts);
 

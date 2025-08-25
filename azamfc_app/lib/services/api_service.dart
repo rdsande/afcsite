@@ -7,27 +7,29 @@ import '../models/fan.dart';
 import '../models/product.dart';
 
 class ApiService {
-  // Use 127.0.0.1 for both web and mobile to match Laravel server
+  // Use localhost for web and 127.0.0.1 for mobile to match CORS configuration
   static String get baseUrl {
     if (kIsWeb) {
-      return 'http://127.0.0.1:8000/api/mobile';
+      return 'http://localhost:8000/api/mobile';
     } else {
       // For mobile devices connected via USB cable, use 127.0.0.1
       return 'http://127.0.0.1:8000/api/mobile';
     }
   }
   
-  final Dio _dio = Dio(BaseOptions(
-    baseUrl: baseUrl,
-    connectTimeout: const Duration(seconds: 10),
-    receiveTimeout: const Duration(seconds: 10),
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-  ));
-
+  late final Dio _dio;
+  
   ApiService() {
+    _dio = Dio(BaseOptions(
+      baseUrl: baseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    ));
+    
     // Add interceptors for logging and error handling
     _dio.interceptors.add(LogInterceptor(
       requestBody: true,
@@ -378,6 +380,111 @@ class ApiService {
     }
   }
 
+  // Jersey API methods
+  Future<Map<String, dynamic>?> getFanJersey(String token) async {
+    try {
+      final response = await _dio.get('/fan/jersey', options: Options(
+        headers: {'Authorization': 'Bearer $token'}
+      ));
+      
+      if (response.statusCode == 200) {
+        return response.data['data'];
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching fan jersey: $e');
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> updateFanJersey(String token, String jerseyName, int jerseyNumber, {String? jerseyType}) async {
+    try {
+      final data = {
+        'jersey_name': jerseyName,
+        'jersey_number': jerseyNumber,
+      };
+      
+      if (jerseyType != null) {
+        data['jersey_type'] = jerseyType;
+      }
+      
+      final response = await _dio.put('/fan/jersey', 
+        data: data,
+        options: Options(headers: {'Authorization': 'Bearer $token'})
+      );
+      
+      if (response.statusCode == 200) {
+        return response.data;
+      }
+      return null;
+    } catch (e) {
+      print('Error updating fan jersey: $e');
+      return null;
+    }
+  }
+
+  // Get all available jersey types with their details
+  Future<Map<String, dynamic>?> getJerseyTypes() async {
+    try {
+      final response = await _dio.get('/mobile/jerseys/types');
+      
+      if (response.statusCode == 200) {
+        return response.data;
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching jersey types: $e');
+      return null;
+    }
+  }
+
+  // Get all active jerseys
+  Future<List<Map<String, dynamic>>> getAllJerseys() async {
+    try {
+      final response = await _dio.get('/mobile/jerseys');
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> jerseysData = response.data['data'];
+        return jerseysData.cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching jerseys: $e');
+      return [];
+    }
+  }
+
+  // Get jersey by type (home, away, third)
+  Future<Map<String, dynamic>?> getJerseyByType(String type) async {
+    try {
+      final response = await _dio.get('/mobile/jerseys/type/$type');
+      
+      if (response.statusCode == 200) {
+        return response.data['data'];
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching jersey by type: $e');
+      return null;
+    }
+  }
+
+  // Admin Notices API methods
+  Future<List<Map<String, dynamic>>> getAdminNotices() async {
+    try {
+      final response = await _dio.get('/admin-notices/dashboard');
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> noticesData = response.data['data'];
+        return noticesData.cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching admin notices: $e');
+      return [];
+    }
+  }
+
   // Mock data methods for fallback when API is unavailable
   List<News> _getMockFeaturedNews() {
     return [
@@ -651,6 +758,44 @@ class ApiService {
         'data': [],
         'message': 'Failed to fetch districts: $e'
       };
+    }
+  }
+
+  // Fans API methods
+  Future<FansResponse> getFans({
+    int page = 1,
+    int perPage = 20,
+    String? search,
+    String? region,
+    String sortBy = 'points',
+    String sortOrder = 'desc',
+  }) async {
+    try {
+      final queryParams = {
+        'page': page.toString(),
+        'per_page': perPage.toString(),
+        'sort_by': sortBy,
+        'sort_order': sortOrder,
+      };
+
+      if (search != null && search.isNotEmpty) {
+        queryParams['search'] = search;
+      }
+
+      if (region != null && region.isNotEmpty) {
+        queryParams['region'] = region;
+      }
+
+      final response = await _dio.get('/fans', queryParameters: queryParams);
+      
+      if (response.data['success'] == true) {
+        return FansResponse.fromJson(response.data);
+      } else {
+        throw Exception(response.data['message'] ?? 'Failed to fetch fans');
+      }
+    } catch (e) {
+      print('Error fetching fans: $e');
+      throw Exception('Failed to fetch fans: $e');
     }
   }
 }

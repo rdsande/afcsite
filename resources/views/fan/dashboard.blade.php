@@ -131,7 +131,12 @@
                 <h3 class="uk-card-title"><span uk-icon="shirt"></span> Your Personalized Jersey</h3>
                 
                 <div class="jersey-container">
-                    <img src="{{ \App\Models\Setting::getJerseyImage() }}" alt="Azam FC Jersey" class="jersey-image">
+                    @php
+                        $jerseyType = $fan->favorite_jersey_type ?? 'home';
+                        $jersey = \App\Models\Jersey::active()->byType($jerseyType)->first();
+                        $jerseyImage = $jersey && $jersey->template_image ? asset('storage/jerseys/' . $jersey->template_image) : \App\Models\Setting::getJerseyImage();
+                    @endphp
+                    <img src="{{ $jerseyImage }}" alt="Azam FC {{ ucfirst($jerseyType) }} Jersey" class="jersey-image">
                     
                     <!-- Jersey Name (curved text) -->
                     <div class="jersey-name">
@@ -142,6 +147,12 @@
                     <div class="jersey-number">
                         {{ $fan->favorite_jersey_number ?: '10' }}
                     </div>
+                </div>
+                
+                <div class="uk-margin-small-top uk-text-center">
+                    <span class="uk-text-small uk-text-muted">
+                        {{ $jersey ? $jersey->name : ucfirst($jerseyType) . ' Jersey' }}
+                    </span>
                 </div>
                 
                 <div class="uk-margin-top">
@@ -462,6 +473,29 @@
                            value="{{ $fan->favorite_jersey_number }}" placeholder="10" min="1" max="99">
                     <div class="uk-text-small uk-text-muted uk-margin-small-top">
                         Choose a number between 1 and 99
+                    </div>
+                </div>
+            </div>
+            
+            <div class="uk-margin">
+                <label class="uk-form-label" for="jersey-type">Jersey Type</label>
+                <div class="uk-form-controls">
+                    <select class="uk-select" id="jersey-type" name="favorite_jersey_type">
+                        @php
+                            $availableJerseys = \App\Models\Jersey::active()->get()->groupBy('type');
+                        @endphp
+                        <option value="home" {{ ($fan->favorite_jersey_type ?? 'home') == 'home' ? 'selected' : '' }}>
+                            {{ $availableJerseys->has('home') ? $availableJerseys['home']->first()->name : 'Home Jersey' }}
+                        </option>
+                        <option value="away" {{ ($fan->favorite_jersey_type ?? 'home') == 'away' ? 'selected' : '' }}>
+                            {{ $availableJerseys->has('away') ? $availableJerseys['away']->first()->name : 'Away Jersey' }}
+                        </option>
+                        <option value="third" {{ ($fan->favorite_jersey_type ?? 'home') == 'third' ? 'selected' : '' }}>
+                            {{ $availableJerseys->has('third') ? $availableJerseys['third']->first()->name : 'Third Jersey' }}
+                        </option>
+                    </select>
+                    <div class="uk-text-small uk-text-muted uk-margin-small-top">
+                        Choose your preferred jersey design
                     </div>
                 </div>
             </div>

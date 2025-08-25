@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('fixtures', function (Blueprint $table) {
-            $table->dropColumn('venue');
-        });
+        if (Schema::hasTable('fixtures') && Schema::hasColumn('fixtures', 'venue')) {
+            Schema::table('fixtures', function (Blueprint $table) {
+                $table->dropColumn('venue');
+            });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('fixtures', function (Blueprint $table) {
-            $table->string('venue')->after('match_date');
-        });
+        if (Schema::hasTable('fixtures') && !Schema::hasColumn('fixtures', 'venue')) {
+            Schema::table('fixtures', function (Blueprint $table) {
+                $table->string('venue')->after('match_date');
+            });
+        }
     }
 };

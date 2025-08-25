@@ -8,6 +8,7 @@ class Fan {
   final String? district;
   final String? profileImage;
   final int points;
+  final String? level;
   final DateTime? dateOfBirth;
   final String? gender;
   final DateTime? createdAt;
@@ -23,6 +24,7 @@ class Fan {
     this.district,
     this.profileImage,
     this.points = 0,
+    this.level,
     this.dateOfBirth,
     this.gender,
     this.createdAt,
@@ -54,6 +56,7 @@ class Fan {
       district: json['district'],
       profileImage: json['profile_image'],
       points: json['points'] ?? 0,
+      level: json['level'],
       dateOfBirth: json['date_of_birth'] != null 
           ? DateTime.parse(json['date_of_birth']) 
           : null,
@@ -78,10 +81,62 @@ class Fan {
       'district': district,
       'profile_image': profileImage,
       'points': points,
+      'level': level,
       'date_of_birth': dateOfBirth?.toIso8601String(),
       'gender': gender,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };
   }
+}
+
+class FansResponse {
+  final List<Fan> fans;
+  final FansPagination pagination;
+
+  FansResponse({
+    required this.fans,
+    required this.pagination,
+  });
+
+  factory FansResponse.fromJson(Map<String, dynamic> json) {
+    return FansResponse(
+      fans: (json['data'] as List)
+          .map((fanJson) => Fan.fromJson(fanJson))
+          .toList(),
+      pagination: FansPagination.fromJson(json['pagination']),
+    );
+  }
+}
+
+class FansPagination {
+  final int currentPage;
+  final int lastPage;
+  final int perPage;
+  final int total;
+  final int? from;
+  final int? to;
+
+  FansPagination({
+    required this.currentPage,
+    required this.lastPage,
+    required this.perPage,
+    required this.total,
+    this.from,
+    this.to,
+  });
+
+  factory FansPagination.fromJson(Map<String, dynamic> json) {
+    return FansPagination(
+      currentPage: json['current_page'],
+      lastPage: json['last_page'],
+      perPage: json['per_page'],
+      total: json['total'],
+      from: json['from'],
+      to: json['to'],
+    );
+  }
+
+  bool get hasNextPage => currentPage < lastPage;
+  bool get hasPreviousPage => currentPage > 1;
 }

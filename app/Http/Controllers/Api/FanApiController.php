@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Fan;
 use App\Models\Region;
 use App\Models\District;
+use App\Models\Jersey;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -150,10 +151,18 @@ class FanApiController extends Controller
     {
         $fan = $request->user();
 
+        // Get points breakdown by type
+        $loginPoints = $fan->getPointsByType('login');
+        $teamWinPoints = $fan->getPointsByType('win');
+        $bonusPoints = $fan->getPointsByType('bonus') + $fan->getPointsByType('admin_bonus') + $fan->getPointsByType('manual');
+
         return response()->json([
             'success' => true,
             'data' => [
-                'points' => $fan->points,
+                'total_points' => $fan->points,
+                'daily_login_points' => $loginPoints,
+                'match_points' => $teamWinPoints,
+                'bonus_points' => $bonusPoints,
                 'level' => $this->calculateLevel($fan->points)
             ]
         ]);
@@ -201,6 +210,147 @@ class FanApiController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Get all fans for public display
+     */
+    public function getAllFans(Request $request): JsonResponse
+    {
+        try {
+            $query = Fan::select([
+                'id',
+                'first_name',
+                'last_name',
+                'region',
+                'district',
+                'points',
+                'profile_image',
+                'created_at'
+            ]);
+
+            // Add search functionality
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('first_name', 'like', "%{$search}%")
+                      ->orWhere('last_name', 'like', "%{$search}%")
+                      ->orWhere('region', 'like', "%{$search}%")
+                      ->orWhere('district', 'like', "%{$search}%");
+                });
+            }
+
+            // Filter by region
+            if ($request->filled('region')) {
+                $query->where('region', $request->region);
+            }
+
+            // Sort by points (highest first) or name
+            $sortBy = $request->get('sort_by', 'points');
+            $sortOrder = $request->get('sort_order', 'desc');
+            
+            if ($sortBy === 'name') {
+                $query->orderBy('first_name', $sortOrder)
+                      ->orderBy('last_name', $sortOrder);
+            } else {
+                $query->orderBy($sortBy, $sortOrder);
+            }
+
+            // Paginate results
+            $perPage = min($request->get('per_page', 20), 50); // Max 50 per page
+            $fans = $query->paginate($perPage);
+
+            // Add level to each fan
+            $fans->getCollection()->transform(function ($fan) {
+                $fan->level = $this->calculateLevel($fan->points);
+                $fan->full_name = $fan->first_name . ' ' . $fan->last_name;
+                return $fan;
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $fans->items(),
+                'pagination' => [
+                    'current_page' => $fans->currentPage(),
+                    'last_page' => $fans->lastPage(),
+                    'per_page' => $fans->perPage(),
+                    'total' => $fans->total(),
+                    'from' => $fans->firstItem(),
+                    'to' => $fans->lastItem(),
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch fans',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get fan jersey details
+     */
+    public function getJersey(Request $request): JsonResponse
+    {
+        $fan = $request->user();
+        $jerseyType = $fan->favorite_jersey_type ?? 'home';
+        
+        // Get the active jersey for the fan's preferred type
+        $jersey = Jersey::active()->byType($jerseyType)->first();
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'jersey_name' => $fan->favorite_jersey_name ?? 'AZAM FAN',
+                'jersey_number' => $fan->favorite_jersey_number ?? 1,
+                'jersey_type' => $jerseyType,
+                'fan_name' => strtoupper($fan->first_name . ' ' . $fan->last_name),
+                'jersey_image_url' => $jersey && $jersey->template_image ? asset('storage/jerseys/' . $jersey->template_image) : null,
+                'jersey_display_name' => $jersey ? $jersey->name : ucfirst($jerseyType) . ' Jersey',
+            ]
+        ]);
+    }
+
+    /**
+     * Update fan jersey details
+     */
+    public function updateJersey(Request $request): JsonResponse
+    {
+        $request->validate([
+            'jersey_name' => 'required|string|max:20',
+            'jersey_number' => 'required|integer|min:1|max:99',
+            'jersey_type' => 'sometimes|in:home,away,third',
+        ]);
+
+        $fan = $request->user();
+        $updateData = [
+            'favorite_jersey_name' => strtoupper($request->jersey_name),
+            'favorite_jersey_number' => $request->jersey_number,
+        ];
+        
+        if ($request->has('jersey_type')) {
+            $updateData['favorite_jersey_type'] = $request->jersey_type;
+        }
+        
+        $fan->update($updateData);
+        
+        // Get the updated jersey information
+        $jerseyType = $fan->favorite_jersey_type;
+        $jersey = Jersey::active()->byType($jerseyType)->first();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Jersey details updated successfully',
+            'data' => [
+                'jersey_name' => $fan->favorite_jersey_name,
+                'jersey_number' => $fan->favorite_jersey_number,
+                'jersey_type' => $fan->favorite_jersey_type,
+                'fan_name' => strtoupper($fan->first_name . ' ' . $fan->last_name),
+                'jersey_image_url' => $jersey && $jersey->template_image ? asset('storage/jerseys/' . $jersey->template_image) : null,
+                'jersey_display_name' => $jersey ? $jersey->name : ucfirst($jerseyType) . ' Jersey',
+            ]
+        ]);
     }
 
     /**
