@@ -22,7 +22,6 @@ class Fixture extends Model
         'match_preview',
         'ticket_link',
         'ticket_price',
-        'is_home',
         'status',
         'home_score',
         'away_score',
@@ -37,7 +36,6 @@ class Fixture extends Model
     protected $casts = [
         'match_date' => 'datetime',
         'ticket_price' => 'decimal:2',
-        'is_home' => 'boolean',
         'is_featured' => 'boolean',
         'team_lineups' => 'array'
     ];
@@ -137,17 +135,29 @@ class Fixture extends Model
     // Accessors
     public function getIsHomeGameAttribute()
     {
-        return stripos($this->home_team, 'Azam FC') !== false;
+        $azamTeam = Team::where('name', 'like', '%Azam FC%')->first();
+        if (!$azamTeam) {
+            return false;
+        }
+        return $this->home_team_id == $azamTeam->id;
     }
 
     public function getOpponentAttribute()
     {
-        return $this->is_home_game ? $this->away_team : $this->home_team;
+        if ($this->is_home_game) {
+            return $this->awayTeam ? $this->awayTeam->name : null;
+        } else {
+            return $this->homeTeam ? $this->homeTeam->name : null;
+        }
     }
 
     public function getOpponentLogoAttribute()
     {
-        return $this->is_home_game ? $this->away_team_logo : $this->home_team_logo;
+        if ($this->is_home_game) {
+            return $this->awayTeam ? $this->awayTeam->logo : null;
+        } else {
+            return $this->homeTeam ? $this->homeTeam->logo : null;
+        }
     }
 
     public function getMatchStatusAttribute()
@@ -196,6 +206,86 @@ class Fixture extends Model
             return $this->home_score . ' - ' . $this->away_score;
         }
         return null;
+    }
+
+    /**
+     * Get match result from Azam FC's perspective
+     * Returns: 'win', 'loss', 'draw', or null if no result
+     */
+    public function getAzamResultAttribute()
+    {
+        if ($this->home_score === null || $this->away_score === null) {
+            return null;
+        }
+
+        $azamTeam = Team::where('name', 'like', '%Azam FC%')->first();
+        if (!$azamTeam) {
+            return null;
+        }
+
+        $isAzamHome = $this->home_team_id == $azamTeam->id;
+        $isAzamAway = $this->away_team_id == $azamTeam->id;
+        
+        if (!$isAzamHome && !$isAzamAway) {
+            return null; // Azam FC not playing in this match
+        }
+
+        if ($this->home_score == $this->away_score) {
+            return 'draw';
+        }
+
+        if ($isAzamHome) {
+            return $this->home_score > $this->away_score ? 'win' : 'loss';
+        } else {
+            return $this->away_score > $this->home_score ? 'win' : 'loss';
+        }
+    }
+
+    /**
+     * Check if Azam FC is playing in this fixture
+     */
+    public function getIsAzamFixtureAttribute()
+    {
+        $azamTeam = Team::where('name', 'like', '%Azam FC%')->first();
+        if (!$azamTeam) {
+            return false;
+        }
+        
+        return $this->home_team_id == $azamTeam->id || $this->away_team_id == $azamTeam->id;
+    }
+
+    /**
+     * Get Azam FC's score in this match
+     */
+    public function getAzamScoreAttribute()
+    {
+        if (!$this->is_azam_fixture) {
+            return null;
+        }
+
+        $azamTeam = Team::where('name', 'like', '%Azam FC%')->first();
+        if ($this->home_team_id == $azamTeam->id) {
+            return $this->home_score;
+        } else {
+            return $this->away_score;
+        }
+    }
+
+    /**
+     * Get opponent's score in this match
+     */
+    public function getOpponentScoreAttribute()
+    {
+        if (!$this->is_azam_fixture) {
+            return null;
+        }
+
+        $azamTeam = Team::where('name', 'like', '%Azam FC%')->first();
+        if ($this->home_team_id == $azamTeam->id) {
+            return $this->away_score;
+        } else {
+            return $this->home_score;
+        }
     }
 
     public function getHomeGoalsAttribute()

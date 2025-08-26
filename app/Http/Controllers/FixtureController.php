@@ -88,25 +88,40 @@ class FixtureController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'home_team' => 'required|string|max:255',
-            'away_team' => 'required|string|max:255',
+            'home_team_id' => 'required|exists:teams,id',
+            'away_team_id' => 'required|exists:teams,id|different:home_team_id',
+            'tournament_id' => 'nullable|exists:tournaments,id',
             'match_date' => 'required|date',
             'match_time' => 'required|date_format:H:i',
-            'competition' => 'nullable|string|max:255',
-            'venue' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
+            'competition_type' => 'nullable|string|max:255',
+            'stadium' => 'nullable|string|max:255',
+            'match_preview' => 'nullable|string',
             'home_score' => 'nullable|integer|min:0',
             'away_score' => 'nullable|integer|min:0',
             'status' => 'required|in:scheduled,live,completed,postponed,cancelled',
             'is_featured' => 'boolean',
-            'notes' => 'nullable|string',
+            'team_category' => 'required|in:senior,u20,u17,u15,u13',
+            'match_type' => 'required|in:league,cup,friendly',
         ]);
 
-        $data = $request->all();
-        $data['is_featured'] = $request->has('is_featured');
-
         // Combine date and time
-        $data['match_date'] = Carbon::createFromFormat('Y-m-d H:i', $request->match_date . ' ' . $request->match_time);
+        $matchDateTime = Carbon::createFromFormat('Y-m-d H:i', $request->match_date . ' ' . $request->match_time);
+
+        $data = [
+            'home_team_id' => $request->home_team_id,
+            'away_team_id' => $request->away_team_id,
+            'tournament_id' => $request->tournament_id,
+            'match_date' => $matchDateTime,
+            'stadium' => $request->stadium,
+            'competition_type' => $request->competition_type,
+            'match_preview' => $request->match_preview,
+            'home_score' => $request->home_score,
+            'away_score' => $request->away_score,
+            'status' => $request->status,
+            'is_featured' => $request->boolean('is_featured'),
+            'team_category' => $request->team_category,
+            'match_type' => $request->match_type,
+        ];
 
         // Auto-set status to completed if both scores are provided
         if ($request->filled('home_score') && $request->filled('away_score') && $data['status'] === 'scheduled') {
@@ -141,25 +156,40 @@ class FixtureController extends Controller
     public function update(Request $request, Fixture $fixture)
     {
         $request->validate([
-            'home_team' => 'required|string|max:255',
-            'away_team' => 'required|string|max:255',
+            'home_team_id' => 'required|exists:teams,id',
+            'away_team_id' => 'required|exists:teams,id|different:home_team_id',
+            'tournament_id' => 'nullable|exists:tournaments,id',
             'match_date' => 'required|date',
             'match_time' => 'required|date_format:H:i',
-            'competition' => 'nullable|string|max:255',
-            'venue' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
+            'competition_type' => 'nullable|string|max:255',
+            'stadium' => 'nullable|string|max:255',
+            'match_preview' => 'nullable|string',
             'home_score' => 'nullable|integer|min:0',
             'away_score' => 'nullable|integer|min:0',
             'status' => 'required|in:scheduled,live,completed,postponed,cancelled',
             'is_featured' => 'boolean',
-            'notes' => 'nullable|string',
+            'team_category' => 'required|in:senior,u20,u17,u15,u13',
+            'match_type' => 'required|in:league,cup,friendly',
         ]);
 
-        $data = $request->all();
-        $data['is_featured'] = $request->has('is_featured');
-
         // Combine date and time
-        $data['match_date'] = Carbon::createFromFormat('Y-m-d H:i', $request->match_date . ' ' . $request->match_time);
+        $matchDateTime = Carbon::createFromFormat('Y-m-d H:i', $request->match_date . ' ' . $request->match_time);
+
+        $data = [
+            'home_team_id' => $request->home_team_id,
+            'away_team_id' => $request->away_team_id,
+            'tournament_id' => $request->tournament_id,
+            'match_date' => $matchDateTime,
+            'stadium' => $request->stadium,
+            'competition_type' => $request->competition_type,
+            'match_preview' => $request->match_preview,
+            'home_score' => $request->home_score,
+            'away_score' => $request->away_score,
+            'status' => $request->status,
+            'is_featured' => $request->boolean('is_featured'),
+            'team_category' => $request->team_category,
+            'match_type' => $request->match_type,
+        ];
 
         // Auto-set status to completed if both scores are provided
         if ($request->filled('home_score') && $request->filled('away_score') && $data['status'] === 'scheduled') {

@@ -17,15 +17,21 @@
             <div class="uk-grid-small uk-child-width-expand@s uk-text-center uk-grid-match uk-margin-medium" uk-grid
                 uk-scrollspy="target: > div; cls: uk-animation-scale-up; delay: 200">
                 
-                <!-- Previous Match -->
+                <!-- Previous Match / Live Match -->
                 @if($previousMatch)
-                    <div class="match-home-card">
+                    <div class="match-home-card {{ $previousMatch->status === 'live' ? 'live-match' : '' }}">
                         <a href="{{ route('fixture.show', $previousMatch->id) }}" class="uk-link-reset">
                         <div class="uk-card uk-card-default uk-card-body">
                             <div class="widget-header-wrapper">
                                 <div class="widget-header-wrapper__header">
                                     <header class="widget-header">
-                                        <h2 class="widget-header__title">PREVIOUS MATCH</h2>
+                                        <h2 class="widget-header__title">
+                                            @if($previousMatch->status === 'live')
+                                                <span class="live-indicator">🔴 LIVE MATCH</span>
+                                            @else
+                                                PREVIOUS MATCH
+                                            @endif
+                                        </h2>
                                     </header>
                                 </div>
                             </div>
@@ -40,12 +46,21 @@
                                         <span class="team-name-card-item">AZAM FC</span>
                                     </div>
                                     <div class="game-score">
-                                        <span class="result-item">
-                                            <h3>{{ $previousMatch->home_score ?? '0' }}</h3>
-                                        </span>
-                                        <span class="result-item">
-                                            <h3>{{ $previousMatch->away_score ?? '0' }}</h3>
-                                        </span>
+                                        @if($previousMatch->status === 'live')
+                                            <span class="result-item live-score">
+                                                <h3>{{ $previousMatch->home_score ?? '0' }}</h3>
+                                            </span>
+                                            <span class="result-item live-score">
+                                                <h3>{{ $previousMatch->away_score ?? '0' }}</h3>
+                                            </span>
+                                        @else
+                                            <span class="result-item">
+                                                <h3>{{ $previousMatch->home_score ?? '0' }}</h3>
+                                            </span>
+                                            <span class="result-item">
+                                                <h3>{{ $previousMatch->away_score ?? '0' }}</h3>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="home-team-item">
                                         <img src="{{ $previousMatch->awayTeam && $previousMatch->awayTeam->logo ? asset('storage/' . $previousMatch->awayTeam->logo) : asset('img/teamlogos/default.png') }}" 
@@ -60,12 +75,21 @@
                                         <span class="team-name-card-item">{{ strtoupper($previousMatch->homeTeam->name ?? 'HOME TEAM') }}</span>
                                     </div>
                                     <div class="game-score">
-                                        <span class="result-item">
-                                            <h3>{{ $previousMatch->home_score ?? '0' }}</h3>
-                                        </span>
-                                        <span class="result-item">
-                                            <h3>{{ $previousMatch->away_score ?? '0' }}</h3>
-                                        </span>
+                                        @if($previousMatch->status === 'live')
+                                            <span class="result-item live-score">
+                                                <h3>{{ $previousMatch->home_score ?? '0' }}</h3>
+                                            </span>
+                                            <span class="result-item live-score">
+                                                <h3>{{ $previousMatch->away_score ?? '0' }}</h3>
+                                            </span>
+                                        @else
+                                            <span class="result-item">
+                                                <h3>{{ $previousMatch->home_score ?? '0' }}</h3>
+                                            </span>
+                                            <span class="result-item">
+                                                <h3>{{ $previousMatch->away_score ?? '0' }}</h3>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="home-team-item">
                                         <img src="{{ asset('img/logo.png')}}" class="logo-card-item" alt="AZAM FC Logo" />

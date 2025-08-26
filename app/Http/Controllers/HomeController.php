@@ -28,24 +28,31 @@ class HomeController extends Controller
             ->limit(6)
             ->get();
 
+        // Check for live matches first - they take priority in the previous match area
+        $liveMatch = Fixture::with(['tournament', 'homeTeam', 'awayTeam', 'matchEvents'])
+            ->where('status', 'live')
+            ->orderBy('match_date', 'desc')
+            ->first();
+
         // Get the most recent completed match (Previous Match)
-        $previousMatch = Fixture::with(['tournament', 'homeTeam', 'awayTeam'])
-            ->where('match_date', '<', now())
+        // If there's a live match, it will be shown instead
+        $previousMatch = $liveMatch ?: Fixture::with(['tournament', 'homeTeam', 'awayTeam'])
             ->where('status', 'completed')
             ->orderBy('match_date', 'desc')
             ->first();
 
         // Get the next upcoming fixture (Next Fixture)
+        // Skip live matches since they're shown in previous match area
         $nextFixture = Fixture::with(['tournament', 'homeTeam', 'awayTeam'])
-            ->where('match_date', '>', now())
             ->where('status', 'scheduled')
+            ->where('match_date', '>=', now())
             ->orderBy('match_date', 'asc')
             ->first();
 
         // Get upcoming fixtures after the next one (Upcoming Fixtures)
         $upcomingFixtures = Fixture::with(['tournament', 'homeTeam', 'awayTeam'])
-            ->where('match_date', '>', now())
             ->where('status', 'scheduled')
+            ->where('match_date', '>=', now())
             ->orderBy('match_date', 'asc')
             ->skip(1)
             ->limit(1)
@@ -53,8 +60,8 @@ class HomeController extends Controller
 
         // Get all fixtures for the fixtures-two section (next + upcoming, limited to 8)
         $allFixtures = Fixture::with(['tournament', 'homeTeam', 'awayTeam'])
-            ->where('match_date', '>', now())
             ->where('status', 'scheduled')
+            ->where('match_date', '>=', now())
             ->orderBy('match_date', 'asc')
             ->limit(8)
             ->get();
@@ -73,6 +80,7 @@ class HomeController extends Controller
             'featuredNews',
             'latestNews', 
             'previousMatch',
+            'liveMatch',
             'nextFixture',
             'upcomingFixtures',
             'allFixtures',

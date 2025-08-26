@@ -352,20 +352,7 @@
                                             @enderror
                                         </div>
 
-                                        <div class="form-group mb-3">
-                                            <div class="form-check">
-                                                <input type="checkbox" 
-                                                       class="form-check-input" 
-                                                       id="is_home" 
-                                                       name="is_home" 
-                                                       value="1" 
-                                                       {{ old('is_home', $fixture->is_home) ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="is_home">
-                                                    Home Match
-                                                </label>
-                                                <small class="form-text text-muted d-block">Check if this is a home match for the selected home team</small>
-                                            </div>
-                                        </div>
+
 
                                         <div class="form-group mb-3">
                                             <div class="form-check">

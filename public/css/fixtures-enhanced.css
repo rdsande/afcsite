@@ -1,19 +1,26 @@
 /* Enhanced Fixtures Styling */
 
+
 /* Fixture Card Enhancements */
-.fixture-card, .result-card {
+
+.fixture-card,
+.result-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border-radius: 12px;
     overflow: hidden;
 }
 
-.fixture-card:hover, .result-card:hover {
+.fixture-card:hover,
+.result-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
+
 /* Header Section */
-.fixture-header, .result-header {
+
+.fixture-header,
+.result-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -49,7 +56,9 @@
     font-size: 0.75rem;
 }
 
+
 /* Teams Section */
+
 .teams-section {
     display: flex;
     align-items: center;
@@ -80,7 +89,9 @@
     color: #333;
 }
 
+
 /* VS Section */
+
 .vs-section {
     display: flex;
     flex-direction: column;
@@ -103,7 +114,9 @@
     margin-top: 5px;
 }
 
+
 /* Score Section */
+
 .score-section {
     display: flex;
     flex-direction: column;
@@ -119,7 +132,8 @@
     color: #333;
 }
 
-.home-score, .away-score {
+.home-score,
+.away-score {
     min-width: 30px;
     text-align: center;
 }
@@ -157,14 +171,16 @@
     color: #333;
 }
 
+
 /* Match Details */
+
 .match-details {
     margin-top: 15px;
     padding-top: 15px;
     border-top: 1px solid #e5e5e5;
 }
 
-.match-details > div {
+.match-details>div {
     display: flex;
     align-items: center;
     margin-bottom: 8px;
@@ -189,14 +205,18 @@
     text-decoration: underline;
 }
 
+
 /* Match Preview/Report */
-.match-preview, .match-report {
+
+.match-preview,
+.match-report {
     margin-top: 15px;
     padding-top: 15px;
     border-top: 1px solid #e5e5e5;
 }
 
-.match-preview p, .match-report p {
+.match-preview p,
+.match-report p {
     font-size: 0.85rem;
     color: #6c757d;
     line-height: 1.4;
@@ -214,7 +234,9 @@
     text-decoration: underline;
 }
 
+
 /* Match Events */
+
 .match-events {
     margin-top: 15px;
     padding-top: 15px;
@@ -261,42 +283,44 @@
     color: #333;
 }
 
+
 /* Responsive Design */
+
 @media (max-width: 768px) {
     .teams-section {
         flex-direction: column;
         gap: 15px;
     }
-    
-    .vs-section, .score-section {
+    .vs-section,
+    .score-section {
         margin: 10px 0;
     }
-    
     .team {
         flex-direction: row;
         gap: 10px;
     }
-    
     .team-logo {
         width: 40px;
         height: 40px;
         margin-bottom: 0;
     }
-    
-    .fixture-header, .result-header {
+    .fixture-header,
+    .result-header {
         flex-direction: column;
         gap: 8px;
         text-align: center;
     }
 }
 
+
 /* Featured Match Enhancements */
+
 .latest-featured-game .highlight-score-section {
     padding: 40px 20px;
 }
 
 .latest-featured-game .uk-card-body {
-    background: rgba(255, 255, 255, 0.95);
+    background: transparent;
     backdrop-filter: blur(10px);
     border-radius: 15px;
     padding: 20px;
@@ -308,13 +332,19 @@
 }
 
 .latest-featured-game .boldfont {
-    background: rgba(0, 123, 255, 0.1);
+    /* background: rgba(0, 123, 255, 0.1); */
     padding: 8px 16px;
-    border-radius: 25px;
-    border: 2px solid rgba(0, 123, 255, 0.3);
+    /* border-radius: 25px; */
+    /* border: 2px solid rgba(0, 123, 255, 0.3); */
 }
 
+.latest-featured-game .boldfont a {
+    text-decoration: none !important;
+}
+
+
 /* Animation Enhancements */
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -326,7 +356,8 @@
     }
 }
 
-.fixture-card, .result-card {
+.fixture-card,
+.result-card {
     animation: fadeInUp 0.6s ease-out;
 }
 
@@ -338,7 +369,9 @@
     animation-delay: 0.2s;
 }
 
+
 /* Loading States */
+
 .fixture-loading {
     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
     background-size: 200% 100%;

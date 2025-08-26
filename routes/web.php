@@ -223,6 +223,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // Match Events Management
     Route::get('fixtures/{fixture}/events', [App\Http\Controllers\Admin\MatchEventController::class, 'index'])->name('fixtures.events.index');
+    Route::get('fixtures/{fixture}/events/manage', [App\Http\Controllers\Admin\MatchEventController::class, 'manageLiveEvents'])->name('fixtures.events.manage');
     Route::post('fixtures/{fixture}/events', [App\Http\Controllers\Admin\MatchEventController::class, 'store'])->name('fixtures.events.store');
     Route::put('events/{event}', [App\Http\Controllers\Admin\MatchEventController::class, 'update'])->name('events.update');
     Route::delete('events/{event}', [App\Http\Controllers\Admin\MatchEventController::class, 'destroy'])->name('events.destroy');

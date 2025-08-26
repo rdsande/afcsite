@@ -1,456 +1,425 @@
 /* Responsive */
 
+
 /*Tablet only*/
+
 @media (min-width: 768px) and (max-width: 1024px) {
-
-  [class*='uk-child-width'] > * {
-    box-sizing: border-box;
-    width: 33.3%;
+    [class*="uk-child-width"]>* {
+        box-sizing: border-box;
+        width: 33.3%;
+    }
+    div#uk-slideshow-21-items {
+        height: 50rem !important;
+    }
+    span.ovrlay {
+        height: 50rem !important;
+    }
+    .caption-div {
+        top: calc(50% - var(--uk-position-margin-offset));
+    }
+    .results-fixtures-carousel .uk-child-width-1-2>* {
+        width: 45% !important;
+    }
+    .logo-bg-footer img {
+        width: 30% !important;
+    }
+    .socialmediacontainer li i {
+        font-size: 25px !important;
+    }
+    .widget-header-wrapper {
+        padding: 1rem;
+    }
+    .latest-featured-game .uk-overlay.uk-position-center.uk-light {
+        width: 100% !important;
+    }
+    .highlight-score-section .uk-column-1-2 {
+        flex-flow: row !important;
+    }
+    .fxtures-home li {
+        width: 35% !important;
+    }
 }
-
-div#uk-slideshow-21-items {
-    height: 40rem !important;
-}
-
-.results-fixtures-carousel .uk-child-width-1-2 > * {
-    width: 45% !important;
-}
-
-.logo-bg-footer img {
-    width: 30% !important;
-}
-
-.socialmediacontainer li i {
-    font-size: 25px !important;
-}
-
-.widget-header-wrapper {
-    padding: 1rem;
-}
-
-.latest-featured-game .uk-overlay.uk-position-center.uk-light {
-    width: 100% !important;
-}
-
-.highlight-score-section .uk-column-1-2 {
-    flex-flow: row !important;
-}
-
-.fxtures-home li {
-    width: 35% !important;
-}
-  
-}
-
-
-
 
 @media (min-width: 1024px) and (max-width: 1280px) {
-.nav-middle-right .uk-navbar-nav a, .nav-middle-left .uk-navbar-nav a {
-    font-size: 1.06em;
+    .nav-middle-right .uk-navbar-nav a,
+    .nav-middle-left .uk-navbar-nav a {
+        font-size: 1.06em;
+    }
+    .nav-middle-right {
+        width: 50%;
+    }
+    .nav-middle.main-nav .uk-container {
+        padding: 0;
+    }
+    .uk-navbar-nav {
+        gap: 5px;
+    }
+    .nav-middle-right {
+        width: 35%;
+    }
 }
-
-.nav-middle-right {
-    width: 50%;
-}
-
-.nav-middle.main-nav .uk-container {
-    padding: 0;
-}
-
-.uk-navbar-nav {
-    gap: 5px; 
-}
-
-.nav-middle-right {
-    width: 35%;
-}
-
-}
-
 
 
 /*Tablet and mobile*/
+
 @media all and (max-width: 1024px) {
-
-.site-header {
-    display: none;
-}
-
-div#uk-slideshow-21-items {
-    height: 30rem !important;
-}
-
-span.ovrlay {
-    height: 30rem;
-}
-
-.mobile-logo img {
-    width: 70px;
-}
-
-.mobile-only-nav .uk-navbar {
-    display: flex;
-    justify-content: space-between;
-}
-
-.mobile-only-nav .uk-navbar-toggle.uk-navbar-toggle-animate.uk-icon.uk-navbar-toggle-icon svg {
-    width: 35px;
-}
-
-nav.uk-navbar-container.mobile-only-nav {
-    background: linear-gradient(180deg, rgba(0, 90,174,1) 17%, rgba(0, 90,174,0) 100%);
-    position: absolute;
-    z-index: 9999 !important;
-    width: 100%;
-    padding: 20px 0;
-}
-
-.mobile-only-nav .uk-navbar-toggle {
-    color: white !important;
-}
-
-.afc-slide {
-    flex: 0 0 100%;
-}
-
-.z-back h1 {
-    width: 90%;
-    font-size: 30px;
-}
-
-h2.widget-header__title {
-    font-size: 24px;
-}
-
-.about-page .uk-padding {
-    padding-top: 0; 
-}
-
-.match-center span {
-    padding-top: 6rem;
-}
-
-.fullwidth-nav-right {
-    left: initial !important;
-    width: initial !important;
-    overflow: hidden;
-}
-
-.post-metas .uk-first-column, .time-col {
-    display: flex;
-    width: 50%;
-}
-
-.uk-padding.time-col {
-    font-size: 13px;
-}
-
-h1.ftr-highlight-txt {
-    font-size: 50px;
-}
-
-.socialmediacontainer li i {
-    font-size: 40px;
-}
-
-.socialmediacontainer li {
-    padding: 15px;
-}
-
-.toppart .uk-card-title a {
-    background: transparent !important;
-}
-
-.app-inst-alert {
-    display: block;
-}
-
-.mobile-only-nav {
-    display: block !important;
-}
-
-.scr-card {
-    flex-flow: row;
-    display: flex;
-}
-
-.scr-card {
-    flex-flow: row;
-    display: flex;
-}
-
-.fxtures-home li {
-    width: 80%;
-}
-
-
-.afc-footer img {
-    width: 100%;
-}
-
-.ftr-sponsor-img {
-    width: 33%;
-    margin: 0 !important;
-    padding: 2px !important;
-    align-items: center;
-    display: flex;
-    justify-content: center;
-}
-
-span.ftr-copy img {
-    width: 20px !important;
-}
-
-.sponsors {
-    width: 100%;
-    margin: auto !important;
-}
-
-.ftr-copy {
-    display: none;
-}
-
-.widget-header-wrapper:before {
-    left: 0;
-    right: 0;
-}
-
-
-.highlight-score-section .uk-column-1-2 {
-    flex-flow: column;
-}
-
-
-.highlight-score-section .uk-grid {flex-flow: row;}
-
-.highlight-score-section .uk-card p {
-    font-size: 25px;
-}
-
-.highlight-score-section img {
-    height: 70px;
-    width: 70px;
-    object-fit: contain;
-}
-
-.inner-fixtures, .inner-fixtures h3, .inner-fixtures span {
-    font-size: 1.1rem;
-}
-
-.mobile-only-nav .uk-navbar-dropdown {
-    width: 100%;
-    --uk-position-offset: 0 !important;
-    --uk-position-viewport-offset: 0 !important;
-    background: var(--gradient-one);
-}
-
-.mobile-only-nav .uk-navbar-dropdown li a {
-    color: white !important;
-    text-transform: uppercase;
-}
-
-.footer-id {
-    flex-flow: wrap-reverse;
-}
-
-.ftr-contact-details {
-    text-align: center;
-}
-
-a.uk-icon.uk-totop {
-    bottom: 0;
-    left: 85%;
-}
-
-footer::before {
-    display: none;
-}
-
-.ftr-contact-details {
-    margin-top: 2rem;
-}
-
-.socialmediacontainer ul {
-    padding: 0;
-}
-
-.phone-cont img {
-    display: none
-}
-
-.results-fixtures-carousel .uk-child-width-1-2 > * {
-    width: 90%;
-}
-
-.results-fixtures-carousel .uk-child-width-1-2 > * {
-    width: 90%;
-}
-
-.player-card-details.uk-animation-slide-bottom-medium {
-    bottom: -4%;
-}
-
-.player-card-details div {
-    display: flex;
-    flex-flow: row;
-}
-
-.results-fixtures-carousel span.pos-player {
-    display: none;
-}
-
-.contain-short-stats .uk-grid-small div {
-    width: 33%;
-    padding-left: 5px;
-}
-
-.home-posts.team-section.shadow-one {
-    margin-top: 10rem;
-}
-
-h1.page-title {
-    top: 50%;
-}
-
-span.primarysort {
-    display: none;
-}
-
-.mobile-only-nav .uk-navbar-dropdown li a {
-    font-family: var(--alt-font);
-    font-size: 18px;
-}
-
-.players-section-container {padding-top: 10rem;background: var(--primary);}
-
-.bg-h-light {
-    background: var(--primary) !important;
-}
-
-.player-no {
-    color: white !important;
-}
-
-.fullwidth-nav-right {
-    left: 0;
-    overflow: hidden;
-    background: #ccc;
-}
-
-.player-pos h1 {
-    -webkit-text-stroke: 1px white;
-    font-size: 7rem;
-    margin-bottom: 9rem;
-    margin-left: -4rem;
-}
-
-.player-details-info h3 {
-    margin-top: -17rem;
-    font-size: 2.6rem;
-    text-align: center;
-}
-
-h2.widget-header__title {
-    padding: 0;
-    margin: 0;
-}
-
-.team-inner .uk-padding.uk-first-column {
-    padding: 0;
-}
-
-.uk-column-1-2 {
-    column-count: 1;
-}
-
-.hist-cont img {
-    width: 100%;
-}
-
-.hist-cont p {
-    width: 100%;
-}
-
-.hist-cont {
-    flex-flow: column;
-}
-.player-pos {
-    bottom: 4rem;
-}
-
-.about-vertical li a {
-    font-size: 1rem;
-    padding: 0.1rem;
-}
-
-h1.headings-normal {
-    padding-top: 2rem;
-}
-
-.mgment {
-    height: 179px;
-}
-
-ul.uk-navbar-nav.plyrposition {
-    flex-wrap: wrap;
-}
-
-.posspan {
-    position: absolute;
-    transform: rotate(-0.25turn);
-    right: -1rem;
-    bottom: 10rem;
-}
-
-.player-details-info {
-    padding: 0;
-}
-
-span.hero-meta {
-    width: 100%;
-}
-
-h1.hero-title, h1.hero-title a {
-    font-size: 40px;
+    .site-header {
+        display: none;
+    }
+    div#uk-slideshow-21-items {
+        height: 45rem !important;
+    }
+    span.ovrlay {
+        height: 45rem !important;
+    }
+    .mobile-logo img {
+        width: 70px;
+    }
+    .mobile-only-nav .uk-navbar {
+        display: flex;
+        justify-content: space-between;
+    }
+    .mobile-only-nav .uk-navbar-toggle.uk-navbar-toggle-animate.uk-icon.uk-navbar-toggle-icon svg {
+        width: 35px;
+    }
+    nav.uk-navbar-container.mobile-only-nav {
+        background: linear-gradient( 180deg, rgba(0, 90, 174, 1) 17%, rgba(0, 90, 174, 0) 100%);
+        position: absolute;
+        z-index: 9999 !important;
+        width: 100%;
+        padding: 20px 0;
+    }
+    .mobile-only-nav .uk-navbar-toggle {
+        color: white !important;
+    }
+    .afc-slide {
+        flex: 0 0 100%;
+    }
+    .z-back h1 {
+        width: 90%;
+        font-size: 30px;
+    }
+    h2.widget-header__title {
+        font-size: 24px;
+    }
+    .about-page .uk-padding {
+        padding-top: 0;
+    }
+    .match-center span {
+        padding-top: 6rem;
+    }
+    .fullwidth-nav-right {
+        left: initial !important;
+        width: initial !important;
+        overflow: hidden;
+    }
+    .post-metas .uk-first-column,
+    .time-col {
+        display: flex;
+        width: 50%;
+    }
+    .uk-padding.time-col {
+        font-size: 13px;
+    }
+    h1.ftr-highlight-txt {
+        font-size: 50px;
+    }
+    .socialmediacontainer li i {
+        font-size: 40px;
+    }
+    .socialmediacontainer li {
+        padding: 15px;
+    }
+    .toppart .uk-card-title a {
+        background: transparent !important;
+    }
+    .app-inst-alert {
+        display: block;
+    }
+    .mobile-only-nav {
+        display: block !important;
+    }
+    .scr-card {
+        flex-flow: row;
+        display: flex;
+    }
+    .scr-card {
+        flex-flow: row;
+        display: flex;
+    }
+    .fxtures-home li {
+        width: 80%;
+    }
+    .afc-footer img {
+        width: 100%;
+    }
+    .ftr-sponsor-img {
+        width: 33%;
+        margin: 0 !important;
+        padding: 2px !important;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+    }
+    span.ftr-copy img {
+        width: 20px !important;
+    }
+    .sponsors {
+        width: 100%;
+        margin: auto !important;
+    }
+    .ftr-copy {
+        display: none;
+    }
+    .widget-header-wrapper:before {
+        left: 0;
+        right: 0;
+    }
+    .highlight-score-section .uk-column-1-2 {
+        flex-flow: column;
+    }
+    .highlight-score-section .uk-grid {
+        flex-flow: row;
+    }
+    .highlight-score-section .uk-card p {
+        font-size: 25px;
+    }
+    .highlight-score-section img {
+        height: 70px;
+        width: 70px;
+        object-fit: contain;
+    }
+    .inner-fixtures,
+    .inner-fixtures h3,
+    .inner-fixtures span {
+        font-size: 1.1rem;
+    }
+    .mobile-only-nav .uk-navbar-dropdown {
+        width: 100%;
+        --uk-position-offset: 0 !important;
+        --uk-position-viewport-offset: 0 !important;
+        background: var(--gradient-one);
+    }
+    .mobile-only-nav .uk-navbar-dropdown li a {
+        color: white !important;
+        text-transform: uppercase;
+    }
+    .footer-id {
+        flex-flow: wrap-reverse;
+    }
+    .ftr-contact-details {
+        text-align: center;
+    }
+    a.uk-icon.uk-totop {
+        bottom: 0;
+        left: 85%;
+    }
+    footer::before {
+        display: none;
+    }
+    .ftr-contact-details {
+        margin-top: 2rem;
+    }
+    .socialmediacontainer ul {
+        padding: 0;
+    }
+    .phone-cont img {
+        display: none;
+    }
+    .results-fixtures-carousel .uk-child-width-1-2>* {
+        width: 90%;
+    }
+    .results-fixtures-carousel .uk-child-width-1-2>* {
+        width: 90%;
+    }
+    .player-card-details.uk-animation-slide-bottom-medium {
+        bottom: -4%;
+    }
+    .player-card-details div {
+        display: flex;
+        flex-flow: row;
+    }
+    .results-fixtures-carousel span.pos-player {
+        display: none;
+    }
+    .contain-short-stats .uk-grid-small div {
+        width: 33%;
+        padding-left: 5px;
+    }
+    .home-posts.team-section.shadow-one {
+        margin-top: 10rem;
+    }
+    h1.page-title {
+        top: 50%;
+    }
+    span.primarysort {
+        display: none;
+    }
+    .mobile-only-nav .uk-navbar-dropdown li a {
+        font-family: var(--alt-font);
+        font-size: 18px;
+    }
+    .players-section-container {
+        padding-top: 10rem;
+        background: var(--primary);
+    }
+    .bg-h-light {
+        background: var(--primary) !important;
+    }
+    .player-no {
+        color: white !important;
+    }
+    .fullwidth-nav-right {
+        left: 0;
+        overflow: hidden;
+        background: #ccc;
+    }
+    .player-pos h1 {
+        -webkit-text-stroke: 1px white;
+        font-size: 7rem;
+        margin-bottom: 9rem;
+        margin-left: -4rem;
+    }
+    .player-details-info h3 {
+        margin-top: -17rem;
+        font-size: 2.6rem;
+        text-align: center;
+    }
+    h2.widget-header__title {
+        padding: 0;
+        margin: 0;
+    }
+    .team-inner .uk-padding.uk-first-column {
+        padding: 0;
+    }
+    .uk-column-1-2 {
+        column-count: 1;
+    }
+    .hist-cont img {
+        width: 100%;
+    }
+    .hist-cont p {
+        width: 100%;
+    }
+    .hist-cont {
+        flex-flow: column;
+    }
+    .player-pos {
+        bottom: 4rem;
+    }
+    .about-vertical li a {
+        font-size: 1rem;
+        padding: 0.1rem;
+    }
+    h1.headings-normal {
+        padding-top: 2rem;
+    }
+    .mgment {
+        height: 179px;
+    }
+    ul.uk-navbar-nav.plyrposition {
+        flex-wrap: wrap;
+    }
+    .posspan {
+        position: absolute;
+        transform: rotate(-0.25turn);
+        right: -1rem;
+        bottom: 10rem;
+    }
+    .player-details-info {
+        padding: 0;
+    }
+    span.hero-meta {
+        width: 100%;
+    }
+    h1.hero-title,
+    h1.hero-title a {
+        font-size: 40px;
+    }
+    .logo-bg-footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .mobile-only {
+        display: block !important;
+    }
+}
+
+
+/* Hero Container Responsive Text */
+
+.hero-container h2.hero-title,
+.hero-container h2.hero-title a {
+    font-size: clamp(32px, 6vw, 60px) !important;
+    line-height: 1.2;
+    padding: 0 1rem;
+}
+
+.hero-container p {
+    font-size: clamp(14px, 3vw, 18px) !important;
+    line-height: 1.4;
+    padding: 0 1rem;
+}
+
+@media (min-width: 1024px) and (max-width: 1280px) {
+    .hero-container h2.hero-title,
+    .hero-container h2.hero-title a {
+        font-size: clamp(48px, 5vw, 56px) !important;
+    }
+    .caption-div {
+        top: calc(50% - var(--uk-position-margin-offset));
+    }
+    .hero-container p {
+        font-size: clamp(16px, 2.5vw, 20px) !important;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .hero-container h2.hero-title,
+    .hero-container h2.hero-title a {
+        font-size: clamp(40px, 6vw, 50px) !important;
+        line-height: 1.1;
+        margin-bottom: 1rem;
+    }
+    .hero-container p {
+        font-size: clamp(16px, 3vw, 20px) !important;
+        line-height: 1.3;
+    }
+    .caption-div {
+        top: calc(25% - var(--uk-position-margin-offset));
+    }
 }
 
-.logo-bg-footer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mobile-only {
-    display: block !important;
-}
-
-}
 
 /* Mobile only*/
+
 @media only screen and (max-width: 600px) {
-	.afc-footer img {
-    width: 120px;
+    .afc-footer img {
+        width: 120px;
+    }
+    .afc-slider {
+        height: 420px !important;
+    }
+    .hero-container h2.hero-title,
+    .hero-container h2.hero-title a {
+        font-size: clamp(28px, 8vw, 40px) !important;
+    }
+    .hero-container p {
+        font-size: clamp(12px, 4vw, 16px) !important;
+    }
+    h1.hero-title,
+    h1.hero-title a,
+    .uk-slideshow-items h2 {
+        font-size: 32px;
+    }
+    .socialmediacontainer li i {
+        font-size: 28px;
+    }
+    .socialmediacontainer li {
+        padding: 10px;
+    }
 }
-
-.afc-slider {
-    height: 420px !important;
-}
-
-h1.hero-title, h1.hero-title a, .uk-slideshow-items h2 {
-    font-size: 32px;
-}
-
-.socialmediacontainer li i {
-    font-size: 28px;
-}
-
-.socialmediacontainer li {
-    padding: 10px;
-}
-
-}
-
 
 
 /* Desktop*/

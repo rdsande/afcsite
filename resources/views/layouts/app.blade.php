@@ -48,7 +48,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;800;900&family=Work+Sans:ital,wght@0,300;0,400;0,600;0,800;0,900;1,300;1,600;1,800;1,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-    
+
     <!-- Custom Fan Authentication Styles -->
     <style>
         .fan-name-display {
@@ -60,12 +60,12 @@
             font-family: var(--alt-font, 'Barlow', sans-serif);
             text-transform: uppercase;
         }
-        
+
         .nav-item-round {
             display: inline-flex;
             align-items: center;
         }
-        
+
         @media (max-width: 768px) {
             .fan-name-display {
                 display: none;
@@ -156,63 +156,53 @@
                                                 <i class="ri-menu-line"></i>
                                             </span>
                                             @auth('fan')
-                                                <span class="fan-name-display">
-                                                    {{ Auth::guard('fan')->user()->first_name }}
-                                                </span>
+                                            <span class="fan-name-display">
+                                                {{ Auth::guard('fan')->user()->first_name }}
+                                            </span>
                                             @endauth
                                         </a></li>
                                     <div id="offcanvas-overlay" uk-offcanvas="flip: true">
                                         <div class="uk-offcanvas-bar">
 
                                             <button class="uk-offcanvas-close" type="button" uk-close></button>
-
-                                            <h3>AZAM FOOTBALL CLUB</h3>
-
-                                            <p>Azam Football Club is a professional football club based in Chamazi,
-                                                Temeke, Dar es Salaam, Tanzania, that competes in the Tanzanian Premier
-                                                League. Nicknamed Wana Lambalamba, Chamazi Millionaires or the Bakers,
-                                                the club was founded as Mzizima Football Club in 2004, changed its name
-                                                to Azam Sports Club in 2005, then Azam Football Club in 2006 and moved
-                                                to its current stadium, Azam Complex Chamazi, in 2010.</p>
-
                                             <!-- Fan Authentication Section -->
                                             <div class="uk-margin-medium-top">
                                                 @auth('fan')
-                                                    <!-- Authenticated Fan Menu -->
-                                                    <div class="uk-card uk-card-default uk-card-body uk-margin-bottom">
-                                                        <h4 class="uk-card-title uk-text-primary">
-                                                            <i class="ri-user-line"></i> Welcome, {{ Auth::guard('fan')->user()->first_name }}!
-                                                        </h4>
-                                                        <div class="uk-margin">
-                                                            <a href="{{ route('fan.dashboard') }}" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">
-                                                                <i class="ri-dashboard-line"></i> My Dashboard
-                                                            </a>
-                                                            <a href="{{ route('profile.show') }}" class="uk-button uk-button-default uk-width-1-1 uk-margin-small-bottom">
-                                                                <i class="ri-user-settings-line"></i> My Profile
-                                                            </a>
-                                                            <form method="POST" action="{{ route('fan.logout') }}" class="uk-margin-small-top">
-                                                                @csrf
-                                                                <button type="submit" class="uk-button uk-button-secondary uk-width-1-1">
-                                                                    <i class="ri-logout-box-line"></i> Logout
-                                                                </button>
-                                                            </form>
-                                                        </div>
+                                                <!-- Authenticated Fan Menu -->
+                                                <div class="uk-card uk-card-transparent uk-card-body uk-margin-bottom">
+                                                    <h4 class="uk-card-title uk-text-primary">
+                                                        <i class="ri-user-line"></i> Welcome, {{ Auth::guard('fan')->user()->first_name }}!
+                                                    </h4>
+                                                    <div class="uk-margin">
+                                                        <a href="{{ route('fan.dashboard') }}" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">
+                                                            <i class="ri-dashboard-line"></i> My Dashboard
+                                                        </a>
+                                                        <a href="{{ route('profile.show') }}" class="uk-button uk-button-default uk-width-1-1 uk-margin-small-bottom">
+                                                            <i class="ri-user-settings-line"></i> My Profile
+                                                        </a>
+                                                        <form method="POST" action="{{ route('fan.logout') }}" class="uk-margin-small-top">
+                                                            @csrf
+                                                            <button type="submit" class="uk-button uk-button-secondary uk-width-1-1">
+                                                                <i class="ri-logout-box-line"></i> Logout
+                                                            </button>
+                                                        </form>
                                                     </div>
+                                                </div>
                                                 @else
-                                                    <!-- Guest User Authentication Buttons -->
-                                                    <div class="uk-card uk-card-default uk-card-body uk-margin-bottom">
-                                                        <h4 class="uk-card-title uk-text-primary">
-                                                            <i class="ri-user-add-line"></i> Join AZAM FC Family
-                                                        </h4>
-                                                        <div class="uk-margin">
-                                                            <a href="{{ route('fan.login') }}" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">
-                                                                <i class="ri-login-box-line"></i> Fan Login
-                                                            </a>
-                                                            <a href="{{ route('fan.register') }}" class="uk-button uk-button-secondary uk-width-1-1">
-                                                                <i class="ri-user-add-line"></i> Register as Fan
-                                                            </a>
-                                                        </div>
+                                                <!-- Guest User Authentication Buttons -->
+                                                <div class="uk-card uk-card-transparent uk-card-body uk-margin-bottom">
+                                                    <h4 class="uk-card-title uk-text-primary">
+                                                        <i class="ri-user-add-line"></i> Join AZAM FC Family
+                                                    </h4>
+                                                    <div class="uk-margin">
+                                                        <a href="{{ route('fan.login') }}" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">
+                                                            <i class="ri-login-box-line"></i> Fan Login
+                                                        </a>
+                                                        <a href="{{ route('fan.register') }}" class="uk-button uk-button-secondary uk-width-1-1">
+                                                            <i class="ri-user-add-line"></i> Register as Fan
+                                                        </a>
                                                     </div>
+                                                </div>
                                                 @endauth
                                             </div>
 

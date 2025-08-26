@@ -141,6 +141,17 @@ class MatchEventController extends Controller
     }
 
     /**
+     * Display the live events management page.
+     */
+    public function manageLiveEvents(Fixture $fixture)
+    {
+        $events = $fixture->matchEvents()->with('player')->ordered()->get();
+        $players = Player::where('team_category', $fixture->team_category)->get();
+        
+        return view('admin.match-events.manage', compact('fixture', 'events', 'players'));
+    }
+
+    /**
      * Get live events for a fixture (AJAX).
      */
     public function getLiveEvents(Fixture $fixture): JsonResponse

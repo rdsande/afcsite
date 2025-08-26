@@ -113,65 +113,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                     curve: Curves.easeOutBack,
                   ),
                 const Spacer(), // Fill remaining space
-                // Animated cursive text at bottom
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 60),
-                  child: Column(
-                    children: [
-                      Text(
-                        'timu bora',
-                        style: GoogleFonts.dancingScript(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black.withOpacity(0.5),
-                              offset: const Offset(2, 2),
-                              blurRadius: 4,
-                            ),
-                          ],
-                        ),
-                      )
-                        .animate(delay: const Duration(milliseconds: 1500))
-                        .fadeIn(
-                          duration: const Duration(milliseconds: 1000),
-                        )
-                        .slideY(
-                          begin: 0.3,
-                          end: 0,
-                          duration: const Duration(milliseconds: 800),
-                          curve: Curves.easeOutBack,
-                        ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'bidhaa bora',
-                        style: GoogleFonts.dancingScript(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black.withOpacity(0.5),
-                              offset: const Offset(2, 2),
-                              blurRadius: 4,
-                            ),
-                          ],
-                        ),
-                      )
-                        .animate(delay: const Duration(milliseconds: 2000))
-                        .fadeIn(
-                          duration: const Duration(milliseconds: 1000),
-                        )
-                        .slideY(
-                          begin: 0.3,
-                          end: 0,
-                          duration: const Duration(milliseconds: 800),
-                          curve: Curves.easeOutBack,
-                        ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),

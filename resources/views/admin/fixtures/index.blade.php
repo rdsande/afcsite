@@ -214,16 +214,12 @@
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         @if($fixture->status === 'live')
-                                                             <button type="button" 
-                                                                     class="btn btn-sm btn-success" 
-                                                                     title="Manage Live Events" 
-                                                                     data-fixture-id="{{ $fixture->id }}" 
-                                                                     data-home-team="{{ $fixture->homeTeam->name ?? 'TBD' }}"
-                                        data-away-team="{{ $fixture->awayTeam->name ?? 'TBD' }}" 
-                                                                     onclick="openLiveEventsModal(this)">
-                                                                 <i class="fas fa-broadcast-tower"></i>
-                                                             </button>
-                                                         @endif
+                                             <a href="{{ route('admin.fixtures.events.manage', $fixture->id) }}" 
+                                                class="btn btn-sm btn-success" 
+                                                title="Manage Live Events">
+                                                 <i class="fas fa-broadcast-tower"></i>
+                                             </a>
+                                         @endif
                                                         @if($fixture->status !== 'completed')
                                                             <button type="button" 
                                                                     class="btn btn-sm btn-outline-success" 
@@ -575,7 +571,7 @@
         const eventsList = document.getElementById('eventsList');
         eventsList.innerHTML = '<div class="text-center text-muted"><i class="fas fa-spinner fa-spin"></i> Loading events...</div>';
         
-        fetch(`/admin/fixtures/${currentFixtureId}/events`)
+        fetch(`/admin/fixtures/${currentFixtureId}/events/live`)
             .then(response => response.json())
             .then(data => {
                 if (data.events && data.events.length > 0) {
@@ -658,7 +654,7 @@
     
     function deleteEvent(eventId) {
         if (confirm('Are you sure you want to delete this event?')) {
-            fetch(`/admin/match-events/${eventId}`, {
+            fetch(`/admin/events/${eventId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')

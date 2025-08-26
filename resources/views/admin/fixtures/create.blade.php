@@ -357,20 +357,7 @@
                                             @enderror
                                         </div>
 
-                                        <div class="form-group mb-3">
-                                            <div class="form-check">
-                                                <input type="checkbox" 
-                                                       class="form-check-input" 
-                                                       id="is_home" 
-                                                       name="is_home" 
-                                                       value="1" 
-                                                       {{ old('is_home', $fixture->is_home ?? true) ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="is_home">
-                                                    Home Match
-                                                </label>
-                                                <small class="form-text text-muted d-block">Check if this is a home match for the selected home team</small>
-                                            </div>
-                                        </div>
+
 
                                         <div class="form-group mb-3">
                                             <div class="form-check">
@@ -436,22 +423,24 @@
         @endif
         
         // Update away team label in result section when away team changes
-        const awayTeamInput = document.getElementById('away_team');
+        const awayTeamSelect = document.getElementById('away_team_id');
         const awayScoreLabel = document.querySelector('label[for="away_score"]');
         
-        if (awayTeamInput && awayScoreLabel) {
-            awayTeamInput.addEventListener('input', function() {
-                awayScoreLabel.textContent = this.value || 'Away';
+        if (awayTeamSelect && awayScoreLabel) {
+            awayTeamSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                awayScoreLabel.textContent = selectedOption.text || 'Away';
             });
         }
         
         // Update home team label in result section when home team changes
-        const homeTeamInput = document.getElementById('home_team');
+        const homeTeamSelect = document.getElementById('home_team_id');
         const homeScoreLabel = document.querySelector('label[for="home_score"]');
         
-        if (homeTeamInput && homeScoreLabel) {
-            homeTeamInput.addEventListener('input', function() {
-                homeScoreLabel.textContent = this.value || 'Home';
+        if (homeTeamSelect && homeScoreLabel) {
+            homeTeamSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                homeScoreLabel.textContent = selectedOption.text || 'Home';
             });
         }
         
