@@ -172,7 +172,7 @@
 
 <script>
 // Cascading dropdown for Region -> District
-const apiUrl = '{{ url('fan/api/districts') }}';
+const apiUrl = '{{ url('api/mobile/districts') }}';
 const oldDistrictId = '{{ old('district_id') }}';
 
 document.getElementById('region_id').addEventListener('change', function() {
@@ -187,7 +187,8 @@ document.getElementById('region_id').addEventListener('change', function() {
         // Fetch districts for selected region
         fetch(apiUrl + '/' + regionId)
             .then(response => response.json())
-            .then(districts => {
+            .then(data => {
+                const districts = data.data || [];
                 districts.forEach(district => {
                     const option = document.createElement('option');
                     option.value = district.id;

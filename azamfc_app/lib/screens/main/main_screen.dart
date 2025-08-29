@@ -190,22 +190,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             ),
           ),
           
-          // Fans button
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const FansScreen(),
-                ),
-              );
-            },
-            icon: const Icon(
-              Icons.favorite_outline,
-              color: AppColors.textPrimary,
-              size: 24,
-            ),
-          ),
+          // Fans button removed as requested
           
           // Centered Logo
           Expanded(

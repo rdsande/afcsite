@@ -5,15 +5,16 @@ import '../models/fixture.dart';
 import '../models/player.dart';
 import '../models/fan.dart';
 import '../models/product.dart';
+import '../models/exclusive_story.dart';
 
 class ApiService {
-  // Use localhost for web and 127.0.0.1 for mobile to match CORS configuration
+  // Use localhost for web and network IP for mobile to match CORS configuration
   static String get baseUrl {
     if (kIsWeb) {
       return 'http://localhost:8000/api/mobile';
     } else {
-      // For mobile devices connected via USB cable, use 127.0.0.1
-      return 'http://127.0.0.1:8000/api/mobile';
+      // For mobile devices, use the computer's local network IP
+      return 'http://172.20.0.177:8000/api/mobile';
     }
   }
   
@@ -797,5 +798,122 @@ class ApiService {
       print('Error fetching fans: $e');
       throw Exception('Failed to fetch fans: $e');
     }
+  }
+
+  // Exclusive Stories API methods (public - no authentication required)
+  Future<List<ExclusiveStory>> getFeaturedExclusiveStories({int limit = 4}) async {
+    try {
+      final response = await _dio.get('/exclusive-stories/featured',
+        queryParameters: {'limit': limit}
+      );
+      
+      if (response.data['success'] == true) {
+        final List<dynamic> storiesData = response.data['data'];
+        return storiesData.map((json) => ExclusiveStory.fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching featured exclusive stories: $e');
+      return _getMockExclusiveStories();
+    }
+  }
+
+  Future<ExclusiveStoriesResponse> getExclusiveStories({int page = 1, int perPage = 10}) async {
+    try {
+      final response = await _dio.get('/exclusive-stories',
+        queryParameters: {'page': page, 'per_page': perPage}
+      );
+      
+      return ExclusiveStoriesResponse.fromJson(response.data);
+    } catch (e) {
+      print('Error fetching exclusive stories: $e');
+      return ExclusiveStoriesResponse(
+        success: false,
+        stories: _getMockExclusiveStories(),
+        error: e.toString(),
+      );
+    }
+  }
+
+  Future<ExclusiveStoriesResponse> getExclusiveStoriesByType(String type, {int page = 1, int perPage = 10}) async {
+    try {
+      final response = await _dio.get('/exclusive-stories/type/$type',
+        queryParameters: {'page': page, 'per_page': perPage}
+      );
+      
+      return ExclusiveStoriesResponse.fromJson(response.data);
+    } catch (e) {
+      print('Error fetching exclusive stories by type: $e');
+      return ExclusiveStoriesResponse(
+        success: false,
+        stories: _getMockExclusiveStories().where((story) => story.type == type).toList(),
+        error: e.toString(),
+      );
+    }
+  }
+
+  Future<ExclusiveStory?> getExclusiveStoryDetail(int storyId) async {
+    try {
+      final response = await _dio.get('/exclusive-stories/$storyId');
+      
+      if (response.data['success'] == true) {
+        return ExclusiveStory.fromJson(response.data['data']);
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching exclusive story detail: $e');
+      return null;
+    }
+  }
+
+  // Mock data for exclusive stories
+  List<ExclusiveStory> _getMockExclusiveStories() {
+    return [
+      ExclusiveStory(
+        id: 1,
+        title: 'Last Training at Azam Complex Before Next Match',
+        description: 'Behind the scenes photos from our final training session',
+        type: 'photos',
+        status: 'active',
+        isFeatured: true,
+        createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+        updatedAt: DateTime.now().subtract(const Duration(hours: 2)),
+        mediaCount: 12,
+        thumbnail: MediaThumbnail(
+          url: 'https://via.placeholder.com/400x300?text=Training+Photos',
+          type: 'image/jpeg',
+        ),
+      ),
+      ExclusiveStory(
+        id: 2,
+        title: 'Prince Dube Signs New Contract & Speaks About Future',
+        description: 'Exclusive interview with our star midfielder',
+        type: 'videos',
+        status: 'active',
+        isFeatured: true,
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 1)),
+        mediaCount: 3,
+        thumbnail: MediaThumbnail(
+          url: 'https://via.placeholder.com/400x300?text=Prince+Dube+Interview',
+          type: 'video/mp4',
+        ),
+      ),
+      ExclusiveStory(
+        id: 3,
+        title: 'Behind the Scenes: Match Day Preparation',
+        description: 'See how our team prepares for big matches',
+        type: 'photos',
+        status: 'active',
+        isFeatured: false,
+        createdAt: DateTime.now().subtract(const Duration(days: 3)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 3)),
+        mediaCount: 8,
+        thumbnail: MediaThumbnail(
+          url: 'https://via.placeholder.com/400x300?text=Match+Preparation',
+          type: 'image/jpeg',
+        ),
+      ),
+    ];
   }
 }

@@ -17,7 +17,7 @@ class FixtureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
@@ -80,71 +80,95 @@ class FixtureCard extends StatelessWidget {
             ],
           ),
           
-          const SizedBox(height: 20),
+          const SizedBox(height: 8),
           
-          // Competition and Details
+          // Competition and Details - Compact Single Row
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             decoration: BoxDecoration(
               color: AppColors.surfaceBackground,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
               children: [
                 // Competition
                 Text(
                   fixture.competition,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w700,
+                    fontSize: 12,
                   ),
                   textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 
-                const SizedBox(height: 12),
+                const SizedBox(height: 4),
                 
-                // Time and Date
+                // Date and Stadium in Two Columns
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.access_time,
-                      size: 16,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${fixture.time} ${fixture.date}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w600,
+                    // Left Column - Date and Time
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.access_time,
+                            size: 12,
+                            color: AppColors.textSecondary,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              '${fixture.time} ${fixture.date}',
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 10,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-                
-                const SizedBox(height: 8),
-                
-                // Venue
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.location_on,
-                      size: 16,
-                      color: AppColors.textSecondary,
+                    
+                    // Divider
+                    Container(
+                      width: 1,
+                      height: 16,
+                      color: AppColors.textSecondary.withOpacity(0.3),
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
                     ),
-                    const SizedBox(width: 8),
+                    
+                    // Right Column - Stadium
                     Expanded(
-                      child: Text(
-                        fixture.venue,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            size: 12,
+                            color: AppColors.textSecondary,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              fixture.venue,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 10,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -162,8 +186,8 @@ class FixtureCard extends StatelessWidget {
       children: [
         // Team Logo
         Container(
-          width: 60,
-          height: 60,
+          width: 45,
+          height: 45,
           decoration: BoxDecoration(
             color: AppColors.white,
             shape: BoxShape.circle,
@@ -180,7 +204,7 @@ class FixtureCard extends StatelessWidget {
           ),
         ),
         
-        const SizedBox(height: 12),
+        const SizedBox(height: 6),
         
         // Team Name
         Text(
@@ -188,6 +212,7 @@ class FixtureCard extends StatelessWidget {
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w700,
+            fontSize: 11, // Reduced font size
           ),
           textAlign: TextAlign.center,
           maxLines: 2,

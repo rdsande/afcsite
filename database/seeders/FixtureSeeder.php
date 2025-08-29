@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\Fixture;
 use App\Models\Team;
+use App\Models\Fixture;
+use Illuminate\Database\Seeder;
 use Carbon\Carbon;
 
 class FixtureSeeder extends Seeder
@@ -15,93 +14,117 @@ class FixtureSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get teams for fixtures
-        $teams = Team::all();
+        // Check if we have the required teams
+        $azamTeam = Team::where('name', 'Azam FC')->first();
+        $simbaTeam = Team::where('name', 'Simba SC')->first();
+        $yangaTeam = Team::where('name', 'Young Africans SC')->first();
+        $kageraTeam = Team::where('name', 'Kagera Sugar FC')->first();
+        $coastalTeam = Team::where('name', 'Coastal Union FC')->first();
         
-        if ($teams->count() < 2) {
-            // Create some basic teams if none exist
-            $azamfc = Team::create([
-                'name' => 'Azam FC',
-                'slug' => 'azam-fc',
-                'logo' => 'teams/azam-fc.png',
-                'founded' => '2004-01-01',
-                'stadium' => 'Azam Complex',
-                'description' => 'Azam Football Club'
-            ]);
-            
-            $simba = Team::create([
-                'name' => 'Simba SC',
-                'slug' => 'simba-sc',
-                'logo' => 'teams/simba-sc.png',
-                'founded' => '1936-01-01',
-                'stadium' => 'Benjamin Mkapa Stadium',
-                'description' => 'Simba Sports Club'
-            ]);
-            
-            $yanga = Team::create([
-                'name' => 'Young Africans SC',
-                'slug' => 'young-africans-sc',
-                'logo' => 'teams/yanga-sc.png',
-                'founded' => '1935-01-01',
-                'stadium' => 'Benjamin Mkapa Stadium',
-                'description' => 'Young Africans Sports Club'
-            ]);
-            
-            $teams = collect([$azamfc, $simba, $yanga]);
+        if (!$azamTeam || !$simbaTeam || !$yangaTeam) {
+            $this->command->info('Required teams not found. Please run TeamsTableSeeder first.');
+            return;
         }
-        
-        $azamfc = $teams->where('name', 'Azam FC')->first() ?? $teams->first();
-        $opponents = $teams->where('id', '!=', $azamfc->id);
-        
-        $simbaTeam = $teams->where('name', 'Simba SC')->first();
-        $yangaTeam = $teams->where('name', 'Young Africans SC')->first();
-        
+
+        // Create fixtures
         $fixtures = [
             [
-                'home_team_id' => $azamfc->id,
-                'away_team_id' => $simbaTeam ? $simbaTeam->id : $opponents->first()->id,
-                'match_date' => Carbon::now()->addDays(7)->setTime(16, 0),
-                'stadium' => 'Azam Complex',
-                'competition_type' => 'NBC Premier League',
+                'home_team_id' => $azamTeam->id,
+                'away_team_id' => $simbaTeam->id,
+                'match_date' => now()->addDays(5),
+                'stadium' => 'Azam Complex Stadium',
+                'competition_type' => 'Tanzania Premier League',
                 'match_type' => 'league',
                 'team_category' => 'senior',
-                'match_preview' => 'Exciting match between two top teams.',
+                'match_preview' => 'Upcoming fixture between Azam FC and Simba SC',
                 'status' => 'scheduled',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'is_featured' => true,
             ],
             [
-                'home_team_id' => $yangaTeam ? $yangaTeam->id : $opponents->first()->id,
-                'away_team_id' => $azamfc->id,
-                'match_date' => Carbon::now()->addDays(14)->setTime(19, 0),
+                'home_team_id' => $yangaTeam->id,
+                'away_team_id' => $azamTeam->id,
+                'match_date' => now()->addDays(12),
                 'stadium' => 'Benjamin Mkapa Stadium',
-                'competition_type' => 'NBC Premier League',
+                'competition_type' => 'Tanzania Premier League',
                 'match_type' => 'league',
                 'team_category' => 'senior',
-                'match_preview' => 'Away fixture for Azam FC.',
+                'match_preview' => 'Upcoming fixture between Young Africans SC and Azam FC',
                 'status' => 'scheduled',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'is_featured' => true,
             ],
             [
-                'home_team_id' => $azamfc->id,
-                'away_team_id' => $opponents->skip(1)->first() ? $opponents->skip(1)->first()->id : $opponents->first()->id,
-                'match_date' => Carbon::now()->subDays(7)->setTime(16, 0),
-                'stadium' => 'Azam Complex',
-                'competition_type' => 'NBC Premier League',
+                'home_team_id' => $kageraTeam ? $kageraTeam->id : $azamTeam->id,
+                'away_team_id' => $coastalTeam ? $coastalTeam->id : $simbaTeam->id,
+                'match_date' => now()->addDays(8),
+                'stadium' => 'Kaitaba Stadium',
+                'competition_type' => 'Tanzania Premier League',
                 'match_type' => 'league',
                 'team_category' => 'senior',
-                'match_preview' => 'Previous match result.',
+                'match_preview' => 'Upcoming fixture in the Tanzania Premier League',
+                'status' => 'scheduled',
+                'is_featured' => false,
+            ],
+            [
+                'home_team_id' => $azamTeam->id,
+                'away_team_id' => $yangaTeam->id,
+                'match_date' => now()->subDays(10),
+                'stadium' => 'Azam Complex Stadium',
+                'competition_type' => 'Tanzania Premier League',
+                'match_type' => 'league',
+                'team_category' => 'senior',
+                'match_preview' => 'Past fixture between Azam FC and Young Africans SC',
                 'status' => 'completed',
                 'home_score' => 2,
                 'away_score' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'match_report' => 'Azam FC secured a 2-1 victory against Young Africans SC in an exciting match.',
+                'attendance' => 15000,
+                'referee' => 'John Doe',
+                'is_featured' => true,
+            ],
+            [
+                'home_team_id' => $simbaTeam->id,
+                'away_team_id' => $azamTeam->id,
+                'match_date' => now()->subDays(20),
+                'stadium' => 'Benjamin Mkapa Stadium',
+                'competition_type' => 'Tanzania Premier League',
+                'match_type' => 'league',
+                'team_category' => 'senior',
+                'match_preview' => 'Past fixture between Simba SC and Azam FC',
+                'status' => 'completed',
+                'home_score' => 1,
+                'away_score' => 1,
+                'match_report' => 'The match between Simba SC and Azam FC ended in a 1-1 draw.',
+                'attendance' => 18000,
+                'referee' => 'Jane Smith',
+                'is_featured' => true,
+            ],
+            [
+                'home_team_id' => $coastalTeam ? $coastalTeam->id : $yangaTeam->id,
+                'away_team_id' => $kageraTeam ? $kageraTeam->id : $simbaTeam->id,
+                'match_date' => now()->subDays(15),
+                'stadium' => 'Mkwakwani Stadium',
+                'competition_type' => 'Tanzania Premier League',
+                'match_type' => 'league',
+                'team_category' => 'senior',
+                'match_preview' => 'Past fixture in the Tanzania Premier League',
+                'status' => 'completed',
+                'home_score' => 0,
+                'away_score' => 2,
+                'match_report' => 'The away team secured a 2-0 victory.',
+                'attendance' => 12000,
+                'referee' => 'Robert Johnson',
+                'is_featured' => false,
             ],
         ];
-        
+
         foreach ($fixtures as $fixture) {
-            Fixture::create($fixture);
+            if (!Fixture::where([
+                'home_team_id' => $fixture['home_team_id'],
+                'away_team_id' => $fixture['away_team_id'],
+                'match_date' => $fixture['match_date']
+            ])->exists()) {
+                Fixture::create($fixture);
+            }
         }
     }
 }

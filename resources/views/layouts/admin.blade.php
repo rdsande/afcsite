@@ -217,6 +217,31 @@
                             </ul>
                         </li>
 
+                        <!-- Exclusive Stories Management -->
+                        <li class="nav-item {{ request()->routeIs('admin.exclusive-stories.*') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ request()->routeIs('admin.exclusive-stories.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-images"></i>
+                                <p>
+                                    Exclusive Stories
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.exclusive-stories.index') }}" class="nav-link {{ request()->routeIs('admin.exclusive-stories.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>All Stories</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.exclusive-stories.create') }}" class="nav-link {{ request()->routeIs('admin.exclusive-stories.create') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Add Story</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
                         <!-- Tournament Management -->
                         <li class="nav-item {{ request()->routeIs('admin.tournaments.*') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link {{ request()->routeIs('admin.tournaments.*') ? 'active' : '' }}">

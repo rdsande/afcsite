@@ -50,4 +50,17 @@ class Jersey extends Model
     {
         return $query->where('type', $type);
     }
+    
+    /**
+     * Get the template image attribute with corrected path.
+     */
+    public function getTemplateImageAttribute($value)
+    {
+        // Remove duplicate 'jerseys/' from path if present
+        if ($value && strpos($value, 'jerseys/jerseys/') !== false) {
+            return str_replace('jerseys/jerseys/', 'jerseys/', $value);
+        }
+        
+        return $value;
+    }
 }

@@ -6,6 +6,7 @@ use App\Models\News;
 use App\Models\Player;
 use App\Models\Fixture;
 use App\Models\MatchResult;
+use App\Models\ExclusiveStory;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -76,6 +77,13 @@ class HomeController extends Controller
             ->get()
             ->groupBy('position');
 
+        // Get featured exclusive stories for all users
+        $exclusiveStories = ExclusiveStory::where('is_active', true)
+            ->where('is_featured', true)
+            ->latest()
+            ->limit(6)
+            ->get();
+
         return view('welcome', compact(
             'featuredNews',
             'latestNews', 
@@ -85,7 +93,8 @@ class HomeController extends Controller
             'upcomingFixtures',
             'allFixtures',
             'recentMatches',
-            'seniorPlayers'
+            'seniorPlayers',
+            'exclusiveStories'
         ))->with('news', $latestNews);
     }
 
@@ -205,6 +214,28 @@ class HomeController extends Controller
         }
         
         return view('playerprofile.viewplayer', compact('player', 'relatedPlayers'));
+    }
+
+    /**
+     * Display a single exclusive story.
+     */
+    public function showExclusiveStory($id)
+    {
+        // Check if user is authenticated (either as regular user or fan)
+        if (!auth()->check() && !auth('fan')->check()) {
+            return redirect()->route('login')->with('error', 'You must be logged in to view exclusive stories.');
+        }
+        
+        $story = ExclusiveStory::where('is_active', true)->findOrFail($id);
+        
+        // Get related exclusive stories
+        $relatedStories = ExclusiveStory::where('is_active', true)
+            ->where('id', '!=', $story->id)
+            ->latest()
+            ->limit(4)
+            ->get();
+
+        return view('exclusive-stories.show', compact('story', 'relatedStories'));
     }
 
     /**

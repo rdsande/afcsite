@@ -176,6 +176,9 @@ Route::get('news/{slug}', [App\Http\Controllers\HomeController::class, 'showNews
 Route::get('players', [App\Http\Controllers\HomeController::class, 'players'])->name('players');
 Route::get('player/{id}', [App\Http\Controllers\HomeController::class, 'showPlayer'])->name('player.show');
 
+// Exclusive Stories Routes (Public access)
+Route::get('exclusive-story/{id}', [App\Http\Controllers\HomeController::class, 'showExclusiveStory'])->name('exclusive-story.show');
+
 // Authentication Routes
 Route::get('/login', [App\Http\Controllers\Auth\AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login']);
@@ -209,6 +212,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('news', App\Http\Controllers\Admin\NewsController::class);
     Route::resource('players', App\Http\Controllers\Admin\PlayerController::class);
     Route::resource('teams', App\Http\Controllers\Admin\TeamController::class);
+    
+    // Exclusive Stories Management
+    Route::resource('exclusive-stories', App\Http\Controllers\Admin\ExclusiveStoryController::class);
+    Route::delete('exclusive-stories/{exclusiveStory}/media', [App\Http\Controllers\Admin\ExclusiveStoryController::class, 'removeMedia'])->name('exclusive-stories.remove-media');
     
     // Tournament Management
     Route::resource('tournaments', App\Http\Controllers\Admin\TournamentController::class);

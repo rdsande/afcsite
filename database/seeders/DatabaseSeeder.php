@@ -13,17 +13,16 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            SuperAdminSeeder::class,
-            TanzaniaLocationSeeder::class,
+            UsersTableSeeder::class,
+            TeamsTableSeeder::class,
+            PlayersTableSeeder::class,
+            LeaguesTableSeeder::class,
+            MatchesTableSeeder::class,
             CategorySeeder::class,
-            TeamSeeder::class,
-            PlayerSeeder::class,
-            FanSeeder::class,
-            JerseySeeder::class,
-            FixtureSeeder::class,
-            NewsSeeder::class,
-            PointTransactionSeeder::class,
-            AdminNoticeSeeder::class,
+            NewsTableSeeder::class,
+            RegionsTableSeeder::class,
+            VendorsTableSeeder::class,
+            FansTableSeeder::class,
         ]);
     }
 }

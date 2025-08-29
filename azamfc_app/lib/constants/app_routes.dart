@@ -19,6 +19,7 @@ import '../screens/search/search_screen.dart';
 import '../screens/admin/admin_screen.dart';
 import '../screens/admin/admin_products_screen.dart';
 import '../screens/fans_screen.dart';
+import '../screens/exclusive_stories/exclusive_story_detail_screen.dart';
 
 class AppRoutes {
   // Route names
@@ -40,6 +41,7 @@ class AppRoutes {
   static const String fans = '/fans';
   static const String admin = '/admin';
   static const String adminProducts = '/admin/products';
+  static const String exclusiveStoryDetail = '/exclusive-story-detail';
 
   // Routes map
   static final Map<String, WidgetBuilder> routes = {
@@ -140,6 +142,13 @@ class AppRoutes {
         path: adminProducts,
         builder: (context, state) => const AdminProductsScreen(),
       ),
+      GoRoute(
+        path: '/exclusive-story-detail/:id',
+        builder: (context, state) {
+          final storyId = state.pathParameters['id']!;
+          return ExclusiveStoryDetailScreen(storyId: storyId);
+        },
+      ),
     ],
   );
 
@@ -200,6 +209,10 @@ class AppRoutes {
 
   static void goToPlayerDetail(BuildContext context, String playerId) {
     context.go('/player-detail/$playerId');
+  }
+
+  static void goToExclusiveStoryDetail(BuildContext context, String storyId) {
+    context.go('/exclusive-story-detail/$storyId');
   }
 
   // Push routes (for back navigation)

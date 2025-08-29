@@ -40,6 +40,37 @@
                             </div>
                             <h4 class="text-primary">{{ $fan->first_name }} {{ $fan->last_name }}</h4>
                             <p class="text-muted">Fan Member</p>
+                            
+                            <!-- Personalized Jersey Section -->
+                            <div class="mt-4">
+                                <div class="jersey-container" style="position: relative; width: 200px; margin: 0 auto;">
+                                    @php
+                                        $jerseyType = $fan->favorite_jersey_type ?? 'home';
+                                        $jersey = \App\Models\Jersey::active()->byType($jerseyType)->first();
+                                        $jerseyImage = $jersey && $jersey->template_image ? asset('storage/jerseys/' . $jersey->template_image) : asset('img/kits/home-2024.svg');
+                                    @endphp
+                                    <img src="{{ $jerseyImage }}" alt="Azam FC {{ ucfirst($jerseyType) }} Jersey" style="width: 100%;">
+                                    
+                                    <!-- Jersey Name -->
+                                    <div style="position: absolute; top: 30%; left: 0; right: 0; text-align: center; transform: rotate(-5deg);">
+                                        <span style="color: white; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 1px #000;">
+                                            {{ $fan->favorite_jersey_name ?: 'YOUR NAME' }}
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Jersey Number -->
+                                    <div style="position: absolute; top: 50%; left: 0; right: 0; text-align: center;">
+                                        <span style="color: white; font-weight: bold; font-size: 48px; text-shadow: 2px 2px 2px #000;">
+                                            {{ $fan->favorite_jersey_number ?: '10' }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mt-3 text-center">
+                                    <a href="{{ route('fan.dashboard') }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-tshirt"></i> Customize Jersey
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-8">
                             <div class="profile-info">

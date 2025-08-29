@@ -41,7 +41,7 @@ class MatchCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(16),
@@ -63,7 +63,7 @@ class MatchCard extends StatelessWidget {
               color: AppColors.white,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
-              fontSize: 11,
+              fontSize: 9,
             ),
           ),
           const SizedBox(height: 2),
@@ -72,7 +72,7 @@ class MatchCard extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: AppColors.white.withOpacity(0.9),
               fontWeight: FontWeight.w500,
-              fontSize: 10,
+              fontSize: 8,
             ),
           ),
           const SizedBox(height: 4),
@@ -81,11 +81,11 @@ class MatchCard extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: AppColors.white.withOpacity(0.8),
               fontWeight: FontWeight.w400,
-              fontSize: 9,
+              fontSize: 7,
             ),
           ),
           
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           
           // Teams and Score
           Row(
@@ -132,8 +132,8 @@ class MatchCard extends StatelessWidget {
       children: [
         // Team Logo
         Container(
-          width: 40,
-          height: 40,
+          width: 32,
+          height: 32,
           decoration: BoxDecoration(
             color: AppColors.white,
             shape: BoxShape.circle,
@@ -150,7 +150,7 @@ class MatchCard extends StatelessWidget {
           ),
         ),
         
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         
         // Team Name
         Text(
@@ -158,7 +158,7 @@ class MatchCard extends StatelessWidget {
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: AppColors.white,
             fontWeight: FontWeight.w600,
-            fontSize: 8,
+            fontSize: 7,
           ),
           textAlign: TextAlign.center,
           maxLines: 2,
@@ -171,7 +171,7 @@ class MatchCard extends StatelessWidget {
   Widget _buildTeamLogo(String logoPath) {
     return TeamLogoWidget(
       logoUrl: logoPath,
-      size: 32,
+      size: 24,
     );
   }
 
@@ -188,7 +188,7 @@ class MatchCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: AppColors.white,
                   fontWeight: FontWeight.w900,
-                  fontSize: 20,
+                  fontSize: 16,
                 ),
               ),
               const SizedBox(width: 6),
@@ -197,7 +197,7 @@ class MatchCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: AppColors.white,
                   fontWeight: FontWeight.w900,
-                  fontSize: 20,
+                  fontSize: 16,
                 ),
               ),
             ],
@@ -209,7 +209,7 @@ class MatchCard extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: AppColors.white,
               fontWeight: FontWeight.w900,
-              fontSize: 14,
+              fontSize: 12,
             ),
           ),
         ],

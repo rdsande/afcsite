@@ -20,7 +20,7 @@
                     @endif
                 </div>
                 <div class="player-no">
-                    <!-- Jersey number displayed in player-pos section -->
+                    <h1>{{ $player->jersey_number ?? 'N/A' }}</h1>
                 </div>
                 <div class="player-pos">
                     <h1>{{ $player->jersey_number ?? 'N/A' }}</h1>

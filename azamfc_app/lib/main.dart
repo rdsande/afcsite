@@ -7,6 +7,7 @@ import 'constants/app_colors.dart';
 import 'providers/language_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/exclusive_stories_provider.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -22,7 +23,7 @@ class MyApp extends ConsumerWidget {
     
     return MaterialApp.router(
       title: 'Azam FC',
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false, // Ensures no debug banner is shown
       locale: languageState,
       routerConfig: AppRoutes.router,
       theme: ThemeData(

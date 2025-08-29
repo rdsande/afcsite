@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../constants/app_colors.dart';
 import '../../constants/app_routes.dart';
@@ -45,14 +46,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       descriptionEn: 'Track our match schedule and get information about upcoming games',
       icon: Icons.calendar_today,
       color: AppColors.secondaryRed,
-    ),
-    OnboardingPage(
-      title: 'Wachezaji Wetu',
-      subtitle: 'Our Players',
-      description: 'Jifahamishe na wachezaji wetu na uone takwimu zao za michezo',
-      descriptionEn: 'Get to know our players and see their game statistics',
-      icon: Icons.people,
-      color: AppColors.secondaryGold,
     ),
   ];
 
@@ -157,11 +150,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
             ),
             
-            // Language selection (only on last page)
-            if (isLastPage) ...[
-              _buildLanguageSelection(),
-              const SizedBox(height: 24),
-            ],
+            // No language selection needed as it's already selected in splash screen
             
             // Navigation buttons
             Padding(
@@ -254,7 +243,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           // Title
           Text(
             page.title,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            style: GoogleFonts.bigShouldersDisplay(
+              fontSize: 28,
               color: page.color,
               fontWeight: FontWeight.w700,
             ),
@@ -298,85 +288,38 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
-  Widget _buildLanguageSelection() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 32),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowColor,
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(
-            'Chagua Lugha / Select Language',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: _buildLanguageButton(
-                  'sw',
-                  'SWAHILI',
-                  _selectedLanguage == 'sw',
-                  AppColors.primaryBlue,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildLanguageButton(
-                  'en',
-                  'ENGLISH',
-                  _selectedLanguage == 'en',
-                  AppColors.primaryBlue,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLanguageButton(String language, String label, bool isSelected, Color color) {
+  Widget _buildLanguageButton(String code, String label, bool isSelected, Color color) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectedLanguage = language;
+          _selectedLanguage = code;
         });
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: isSelected ? color : AppColors.surfaceBackground,
+          color: isSelected ? color : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? color : AppColors.borderColor,
+            color: color,
             width: 2,
           ),
         ),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: isSelected ? AppColors.white : AppColors.textPrimary,
-            fontWeight: FontWeight.w600,
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : color,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
           ),
-          textAlign: TextAlign.center,
         ),
       ),
     );
   }
+
+  // Removed duplicate _buildLanguageButton method
 }
 
 class OnboardingPage {

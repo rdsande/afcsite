@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\FanApiController;
 use App\Http\Controllers\Api\ShopApiController;
 use App\Http\Controllers\Api\AdminNoticeApiController;
 use App\Http\Controllers\Api\JerseyApiController;
+use App\Http\Controllers\Api\ExclusiveStoriesApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,4 +88,12 @@ Route::prefix('mobile')->name('mobile.')->group(function () {
     Route::get('/jerseys/types', [JerseyApiController::class, 'getTypes'])->name('jerseys.types');
     Route::get('/jerseys/type/{type}', [JerseyApiController::class, 'getByType'])->name('jerseys.byType');
     Route::get('/jerseys/{jersey}', [JerseyApiController::class, 'show'])->name('jerseys.show');
+
+    // Exclusive Stories endpoints (authenticated only)
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/exclusive-stories', [ExclusiveStoriesApiController::class, 'index'])->name('exclusive-stories.index');
+        Route::get('/exclusive-stories/featured', [ExclusiveStoriesApiController::class, 'featured'])->name('exclusive-stories.featured');
+        Route::get('/exclusive-stories/type/{type}', [ExclusiveStoriesApiController::class, 'byType'])->name('exclusive-stories.byType');
+        Route::get('/exclusive-stories/{id}', [ExclusiveStoriesApiController::class, 'show'])->name('exclusive-stories.show');
+    });
 });
